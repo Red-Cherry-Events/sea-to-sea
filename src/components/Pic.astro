@@ -2,6 +2,7 @@
 // Responsive photo from /public/img: name-800.webp and name-1600.webp
 interface Props { name: string; alt: string; sizes?: string; eager?: boolean; class?: string; small?: boolean }
 const { name, alt, sizes = '100vw', eager = false, class: cls, small = false } = Astro.props;
+// object-position can be passed by the parent through CSS
 const srcset = small ? `/img/${name}-800.webp 800w` : `/img/${name}-800.webp 800w, /img/${name}-1600.webp 1600w`;
 ---
 <img class={cls} src={`/img/${name}-800.webp`} srcset={srcset} sizes={sizes} alt={alt}

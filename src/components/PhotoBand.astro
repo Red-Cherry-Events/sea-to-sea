@@ -1,0 +1,10 @@
+---
+// A full-bleed coastline photo with a line of copy over it.
+import Pic from './Pic.astro';
+interface Props { img: string; alt: string; pos?: string; tall?: boolean }
+const { img, alt, pos = 'center', tall = false } = Astro.props;
+---
+<section class={`band-photo${tall ? ' band-photo--tall' : ''}`}>
+  <Pic name={img} alt={alt} class="band-photo__img" />
+  <div class="wrap band-photo__copy" style={`--pos:${pos}`}><slot /></div>
+</section>

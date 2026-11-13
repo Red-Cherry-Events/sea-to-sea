@@ -6,7 +6,8 @@ import Icon from '../components/Icon.astro';
 import Cta from '../components/Cta.astro';
 import Schedule from '../components/Schedule.astro';
 import Video from '../components/Video.astro';
-import { site, editions, next as e, deposit, rand, swapFee } from '../data/site';
+import PhotoBand from '../components/PhotoBand.astro';
+import { site, editions, next as e, deposit, rand, swapFee, films } from '../data/site';
 const n = editions.north;
 ---
 <Base title="Ride info" description="Registration, parking, the schedule, riders' briefing, GPS downloads, meals, water points, luggage and fuel, safety and the cancellation policy for JBFE Sea to Sea.">
@@ -114,6 +115,11 @@ const n = editions.north;
     </div>
   </section>
 
+  <PhotoBand img="cold-beers" alt="Two cold beers on ice at the finish line">
+    <h2 class="display-lg">Beer O’Clock</h2>
+    <p class="lead">Free beers on the finish line, every day.</p>
+  </PhotoBand>
+
   <section class="section band" id="safety">
     <div class="wrap split">
       <div class="stack">
@@ -129,7 +135,7 @@ const n = editions.north;
 
   <section class="section">
     <div class="wrap">
-      <Video id={site.rideInfoVideoId} poster="rider-ktm" title="JBFE Sea to Sea ride info" label="Watch the ride" />
+      <Video id={films.rideInfo.id} poster="cliff-tops" title={films.rideInfo.title} label="Watch the ride" />
     </div>
   </section>
 

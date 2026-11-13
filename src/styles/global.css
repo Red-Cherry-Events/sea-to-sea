@@ -352,3 +352,40 @@ ul { margin: 0; padding: 0; }
 .hours div { display: grid; grid-template-columns: 110px 1fr; font: 700 20px/28px var(--font-display); }
 .page-facts { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font: 800 18px/22px var(--font-display); text-transform: uppercase; letter-spacing: .08em; }
 .page-facts span:first-child { color: var(--sun); }
+
+/* ---------- v3: coastline photography and films ---------- */
+.band-photo { position: relative; isolation: isolate; overflow: hidden; min-height: min(78svh, 760px); display: grid; align-items: end; }
+.band-photo--tall { min-height: min(100svh, 920px); }
+.band-photo__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.band-photo::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(35,31,32,.35) 0%, rgba(35,31,32,0) 28%, rgba(35,31,32,0) 55%, rgba(35,31,32,.85) 100%); }
+.band-photo__copy { padding-top: var(--space-8); padding-bottom: var(--space-7); display: grid; gap: var(--space-3); justify-items: start; }
+@media (min-width: 900px) { .band-photo__copy { padding-bottom: var(--space-8); } }
+.band-photo__copy p { max-width: 34em; text-shadow: 0 1px 14px rgba(0,0,0,.55); }
+.band-photo__copy .display-xl, .band-photo__copy .display-lg { text-shadow: 0 2px 24px rgba(0,0,0,.35); max-width: 14ch; }
+.band-photo__place { font: 700 14px/18px var(--font-display); text-transform: uppercase; letter-spacing: .12em; color: var(--ink); opacity: .9; }
+
+.coast { display: grid; gap: var(--space-2); grid-template-columns: repeat(2, 1fr); grid-auto-rows: 44vw; }
+.coast figure { margin: 0; overflow: hidden; border-radius: var(--radius-md); }
+.coast img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+.coast figure:hover img { transform: scale(1.04); }
+.coast__big { grid-column: span 2; grid-row: span 2; }
+.coast__wide { grid-column: span 2; }
+@media (min-width: 900px) {
+  .coast { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 260px; gap: var(--space-3); }
+  .coast__big { grid-column: span 2; grid-row: span 2; }
+}
+@media (min-width: 1300px) { .coast { grid-auto-rows: 300px; } }
+.coast-wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--space-2); }
+@media (min-width: 900px) { .coast-wrap { padding: 0 var(--space-4); } }
+
+.films { display: grid; gap: var(--space-5); }
+@media (min-width: 760px) { .films--2 { grid-template-columns: 1fr 1fr; } .films--3 { grid-template-columns: 1fr 1fr; } .films--3 .film:first-child { grid-column: span 2; } }
+@media (min-width: 1100px) { .films--3 { grid-template-columns: repeat(3, 1fr); } .films--3 .film:first-child { grid-column: auto; } }
+.film { margin: 0; display: grid; gap: var(--space-3); }
+.film .video { border-radius: var(--radius-md); }
+.film .video img { opacity: .85; }
+.film figcaption { font: 700 18px/22px var(--font-display); }
+.film .video button span { padding: var(--space-2) var(--space-4); }
+.coast { grid-auto-flow: dense; }
+@media (min-width: 760px) { .films--4 { grid-template-columns: repeat(3, 1fr); } .films--4 .film:first-child { grid-column: 1 / -1; } }
+.films--1 { max-width: 1000px; }

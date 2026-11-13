@@ -53,6 +53,7 @@ export type Edition = {
   hero: string; heroAlt: string;
   hotels: { name: string; when: string; body: string; imgs: { name: string; alt: string }[] }[];
   days: RideDay[];
+  videos: { id: string; title: string; poster: string }[];
   registration: { when: string; where: string };
   gpsSent: string | null;
   refunds: [string, string][] | null;
@@ -66,8 +67,8 @@ export const editions: Record<'south' | 'north', Edition> = {
     dayDates: ['Fri 7 May', 'Sat 8 May', 'Sun 9 May', 'Mon 10 May', 'Tue 11 May'],
     startHotel: 'Trennerys Hotel (Seagulls)', midHotel: 'Kob Inn', region: 'the southern Wild Coast',
     totalKm: null,
-    entriesOpen: false, // flip to true and set enterUrl when 2027 entries go live
-    enterUrl: 'https://entries.redcherryevents.co.za/',
+    entriesOpen: true,
+    enterUrl: 'https://entries.redcherryevents.co.za/events/84861',
     racePackCloses: null,
     summary: 'From the southernmost hotels in the Transkei, north along the Wild Coast to Kob Inn and back.',
     intro: [
@@ -75,15 +76,20 @@ export const editions: Record<'south' | 'north', Edition> = {
       'Two nights at Kob Inn means no packing up on Day 2. Day 3 brings you back down the coast to the finish arch, a cold beer and your medal.',
       'Take the Gold route for a proper test. Take Silver for a steadier pace, with time for a photo or a cold one at a local shebeen. The Adventure route keeps the big bikes in on the fun.',
     ],
-    hero: 'river-mouth', heroAlt: 'Riders gathered on a dirt road at a river mouth by the sea',
+    hero: 'sunset-coast', heroAlt: 'Sunset over the southern Wild Coast, with the river mouth and beach below',
     hotels: [
       { name: 'Trennerys Hotel (Seagulls)', when: 'Registration night and the night after Day 3', body: 'Where it starts and ends. Your vehicle and trailer stay parked here while you ride.', imgs: [] },
       { name: 'Kob Inn', when: 'The nights after Day 1 and Day 2', body: 'Two nights in one place, so Day 2 starts without packing a bag.', imgs: [] },
     ],
     days: [
-      { n: 1, date: 'Sat 8 May', from: 'Trennerys', to: 'Kob Inn', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'coast-riders', alt: 'Two riders stop on a grassy ridge above the Wild Coast', body: ['North up the coast through the tribal lands of the Transkei to Kob Inn.'] },
-      { n: 2, date: 'Sun 9 May', from: 'Kob Inn', to: 'Kob Inn', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'climb', alt: 'A rider climbing a rocky track through coastal bush', body: ['An out-ride from Kob Inn, with options to go Wild or keep it Mild. No packing up.'] },
-      { n: 3, date: 'Mon 10 May', from: 'Kob Inn', to: 'Trennerys', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'team-beach', alt: 'A team of riders with arms raised beside their bikes above the beach', body: ['Back down the coast to the finish arch. Done and Dusted! Prize-giving and medals that night.'] },
+      { n: 1, date: 'Sat 8 May', from: 'Trennerys', to: 'Kob Inn', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'river-cliff', alt: 'A river winding to the sea below forested cliffs', body: ['North up the coast through the tribal lands of the Transkei to Kob Inn.'] },
+      { n: 2, date: 'Sun 9 May', from: 'Kob Inn', to: 'Kob Inn', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'river-crossing', alt: 'A rider splashing through a rocky river crossing', body: ['An out-ride from Kob Inn, with options to go Wild or keep it Mild. No packing up.'] },
+      { n: 3, date: 'Mon 10 May', from: 'Kob Inn', to: 'Trennerys', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'beach-ride', alt: 'A rider on the hard sand of a Wild Coast beach', body: ['Back down the coast to the finish arch. Done and Dusted! Prize-giving and medals that night.'] },
+    ],
+    videos: [
+      { id: 'G2_grtw-Ou8', title: 'Day 3, Sea to Sea South 2025', poster: 'beach-surf' },
+      { id: 'WBAWFe604Bs', title: 'Day 2, Sea to Sea South 2025', poster: 'river-bend' },
+      { id: '7y2TuVIxAss', title: 'Highlights from Sea to Sea South 2024', poster: 'estuary-sun' },
     ],
     registration: { when: 'Fri 7 May, 14:00 – 19:00', where: 'Trennerys Hotel (Seagulls)' },
     gpsSent: null,
@@ -156,6 +162,10 @@ export const editions: Record<'south' | 'north', Edition> = {
           'The final evening is rounded off with a medal handout and some fines. You sleep at Ocean View Hotel and head home after breakfast.',
         ],
       },
+    ],
+    videos: [
+      { id: 'buvMPIk9lSc', title: 'Sea to Sea North 2026: on-bike highlights', poster: 'hole-in-wall' },
+      { id: 'IztEg2E2-ls', title: 'It doesn’t happen overnight: Sea to Sea North', poster: 'coast-aerial' },
     ],
     registration: { when: 'Arrival day, 14:00 – 19:00', where: 'The front lawn at Ocean View Hotel' },
     gpsSent: null,
@@ -281,6 +291,36 @@ export const otherEvents = [
   { name: 'Sea to Ski', href: 'http://www.seatoski.co.za/', logo: '/logos/seatoski.png' },
   { name: 'Inner City Enduro', href: 'https://innercityenduro.co.za/', logo: '/logos/ice.png' },
   { name: 'Rallye Raid', href: 'https://www.rallyeraid.co.za/', logo: '/logos/rallyeraid.png' },
+];
+
+export const films = {
+  main: { id: '82LaaA-cggw', title: 'JBFE Sea to Sea South 2024', poster: 'lagoon' },
+  more: [
+    { id: '7y2TuVIxAss', title: 'Highlights from Sea to Sea South 2024', poster: 'estuary-sun' },
+    { id: 'buvMPIk9lSc', title: 'Sea to Sea North 2026: on-bike highlights', poster: 'hole-in-wall' },
+    { id: 'ijrwd36K5t4', title: 'Come riding with us on the Wild Side', poster: 'beach-ride' },
+  ],
+  journey: [
+    { id: 'ijrwd36K5t4', title: 'Come riding with us on the Wild Side', poster: 'dune-climb' },
+    { id: 'G2_grtw-Ou8', title: 'Day 3, Sea to Sea South 2025', poster: 'beach-surf' },
+  ],
+  rideInfo: { id: 'St3qMOi5bKU', title: 'JBFE Sea to Sea ride info', poster: 'rider-ktm' },
+  enter: { id: 'WBAWFe604Bs', title: 'Day 2, Sea to Sea South 2025', poster: 'river-bend' },
+};
+
+// Photo sets (names in /public/img). The coastline first.
+export const coastGallery = [
+  { name: 'lagoon', alt: 'A still lagoon reflecting the sky, winding out to the sea between green hills', size: 'big' },
+  { name: 'beach-ride', alt: 'A rider crossing a wide, empty beach' },
+  { name: 'gorge', alt: 'A river cutting through a deep forested gorge, from the air' },
+  { name: 'sunset-coast', alt: 'The sun setting over the Wild Coast and a river mouth', size: 'wide' },
+  { name: 'river-crossing', alt: 'A rider splashing through a rocky river crossing' },
+  { name: 'rock-coast', alt: 'Riders stopped on the grass above a rocky shoreline and breaking waves', size: 'wide' },
+  { name: 'aerial-village', alt: 'A coastal village in the trees above the beach, from the air' },
+  { name: 'dune-climb', alt: 'A rider climbing a steep sandy bank' },
+  { name: 'river-bend', alt: 'A wide river bend running to the sea between grassy hills', size: 'wide' },
+  { name: 'cold-beers', alt: 'Two cold beers on ice at the finish line' },
+  { name: 'cliff-path', alt: 'A rider coming up a sandy cliff path above the sea' },
 ];
 
 export const rand = (n: number | null) =>

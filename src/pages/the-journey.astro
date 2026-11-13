@@ -4,10 +4,13 @@ import PageHead from '../components/PageHead.astro';
 import Grades from '../components/Grades.astro';
 import EditionCards from '../components/EditionCards.astro';
 import Cta from '../components/Cta.astro';
-import { site } from '../data/site';
+import Films from '../components/Films.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import CoastGallery from '../components/CoastGallery.astro';
+import { site, films, coastGallery } from '../data/site';
 ---
 <Base title="The journey" description="3 days of riding around the tribal lands of the Transkei on Gold, Silver or Adventure routes. See what's in store on JBFE Sea to Sea South and North.">
-  <PageHead title="The journey" img="coast-aerial" lead="3 days of riding around the tribal lands of the Transkei. Here’s what is in store for you on this Epic Adventure." />
+  <PageHead title="The journey" img="river-wide" lead="3 days of riding around the tribal lands of the Transkei. Here’s what is in store for you on this Epic Adventure." />
 
   <section class="section" style="padding-top: var(--space-6)">
     <div class="wrap">
@@ -19,6 +22,11 @@ import { site } from '../data/site';
     </div>
   </section>
 
+  <PhotoBand img="gorge" alt="A river cutting through a deep forested gorge, from the air" tall>
+    <h2 class="display-xl">Go Wild or keep it Mild</h2>
+    <p class="lead">75% of Gold and Silver is shared, so your team is never far apart, and never far from an escape.</p>
+  </PhotoBand>
+
   <section class="section band">
     <div class="wrap">
       <div class="stack" style="max-width: 44em">
@@ -27,6 +35,14 @@ import { site } from '../data/site';
       </div>
       <EditionCards />
     </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap"><Films films={films.journey} /></div>
+  </section>
+
+  <section class="section" style="padding-top: 0" aria-label="Photos of the route">
+    <div class="coast-wrap"><CoastGallery items={coastGallery.slice(3)} /></div>
   </section>
 
   <section class="section">

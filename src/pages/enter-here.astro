@@ -3,11 +3,13 @@ import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Packages from '../components/Packages.astro';
 import Cta from '../components/Cta.astro';
-import { site, next as e, editions, deposit, rand, entryFields, when } from '../data/site';
+import PhotoBand from '../components/PhotoBand.astro';
+import Films from '../components/Films.astro';
+import { site, next as e, editions, deposit, rand, entryFields, when, films } from '../data/site';
 const n = editions.north;
 ---
 <Base title="Enter here" description={`Enter your team for JBFE Sea to Sea. Rider entry ${rand(12650)}, supporter entry ${rand(11450)}. Limited to ${site.teamsMax} teams.`}>
-  <PageHead title="Enter here" img="bush-climb" lead="Spots are limited by hotel space. Get your entries in early to avoid disappointment.">
+  <PageHead title="Enter here" img="start-arch" lead="Spots are limited by hotel space. Get your entries in early to avoid disappointment.">
     <p class="page-facts"><span>{e.short}: {when(e)}</span><span>{n.short}: {when(n)}</span></p>
     <div class="btn-row"><Cta /><a class="s2s-btn s2s-btn--ghost" href={site.loginUrl} rel="noopener">Log in to my entry</a></div>
   </PageHead>
@@ -55,6 +57,11 @@ const n = editions.north;
     </div>
   </section>
 
+  <PhotoBand img="beach-flat" alt="A rider on a wide beach at low tide, with green hills behind">
+    <h2 class="display-lg">Limited to {site.teamsMax} teams</h2>
+    <p class="lead">Hotel space sets the limit. Get your team in early.</p>
+  </PhotoBand>
+
   <section class="section" id="packages">
     <div class="wrap">
       <h2 class="display-lg" style="margin-bottom: var(--space-6)">The packages</h2>
@@ -63,6 +70,10 @@ const n = editions.north;
   </section>
 
   <section class="section band">
+    <div class="wrap"><Films films={[films.enter]} /></div>
+  </section>
+
+  <section class="section">
     <div class="wrap facts-list">
       <div>
         <h3>How teams work</h3>

@@ -1,0 +1,13 @@
+---
+import Pic from './Pic.astro';
+import { coastGallery } from '../data/site';
+interface Props { items?: typeof coastGallery }
+const { items = coastGallery } = Astro.props;
+---
+<div class="coast">
+  {items.map((g) => (
+    <figure class={g.size ? `coast__${g.size}` : ''}>
+      <Pic name={g.name} alt={g.alt} sizes={g.size === 'big' ? '(min-width: 900px) 66vw, 100vw' : g.size === 'wide' ? '(min-width: 900px) 50vw, 100vw' : '(min-width: 900px) 33vw, 50vw'} />
+    </figure>
+  ))}
+</div>

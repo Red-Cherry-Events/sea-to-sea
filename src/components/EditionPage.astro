@@ -9,11 +9,17 @@ import Hotels from './Hotels.astro';
 import Grades from './Grades.astro';
 import Included from './Included.astro';
 import Packages from './Packages.astro';
-import { site, when, editions, type Edition } from '../data/site';
+import Films from './Films.astro';
+import PhotoBand from './PhotoBand.astro';
+import CoastGallery from './CoastGallery.astro';
+import { site, when, editions, coastGallery, type Edition } from '../data/site';
 interface Props { edition: Edition }
 const { edition: e } = Astro.props;
 const other = e.id === 'south' ? editions.north : editions.south;
 const full = e.days.every((d) => d.km);
+const band = e.id === 'south'
+  ? { img: 'estuary-sun', alt: 'Morning light over a river mouth on the southern Wild Coast', h: 'Wild Coast mornings', p: 'Mist on the river mouths, cliffs above the sea, and nobody on the beach but your team.' }
+  : { img: 'coast-aerial', alt: 'The Wild Coast from the air, with a track running along the cliffs', h: 'Dirt bike heaven', p: 'Mdumbi, Mpuzi, Mpami, Lapanzi and Hole in the Wall, all in three days of riding.' };
 const schema = e.start ? [{
   '@context': 'https://schema.org', '@type': 'SportsEvent', name: `${e.name} ${e.year}`,
   startDate: e.start, endDate: e.end, eventStatus: 'https://schema.org/EventScheduled',
@@ -54,9 +60,14 @@ const schema = e.start ? [{
         </div>
         {!e.dates && <div class="notice"><strong>Dates to be confirmed</strong><span>The next {e.short} dates aren’t set yet. Get on the list and we’ll tell you first.</span></div>}
       </div>
-      <div class="split__img"><Pic name={e.id === 'north' ? 'coast-riders' : 'team-beach'} alt={e.id === 'north' ? 'Two riders stop on a grassy ridge above the Wild Coast' : 'A team of riders with arms raised beside their bikes above the beach'} sizes="(min-width: 900px) 50vw, 100vw" /></div>
+      <div class="split__img"><Pic name={e.id === 'north' ? 'coast-riders' : 'lookout'} alt={e.id === 'north' ? 'Two riders stop on a grassy ridge above the Wild Coast' : 'Riders standing on a grassy headland above the sea'} sizes="(min-width: 900px) 50vw, 100vw" /></div>
     </div>
   </section>
+
+  <PhotoBand img={band.img} alt={band.alt} tall>
+    <h2 class="display-xl">{band.h}</h2>
+    <p class="lead">{band.p}</p>
+  </PhotoBand>
 
   <section class="section band" id="days">
     <div class="wrap">
@@ -68,7 +79,14 @@ const schema = e.start ? [{
       </div>
       {full
         ? <div class="chapters">{e.days.map((d, i) => <DayChapter day={d} flip={i % 2 === 1} />)}</div>
-        : <div style="max-width: 760px"><Days edition={e} /></div>}
+        : <div class="split" style="align-items: start"><Days edition={e} /><div class="split__img sticky-col"><Pic name="green-rider" alt="A rider in bright green kit on a grassy coastal track" sizes="(min-width: 900px) 50vw, 100vw" /></div></div>}
+    </div>
+  </section>
+
+  <section class="section" id="films">
+    <div class="wrap">
+      <h2 class="display-lg" style="margin-bottom: var(--space-6)">Watch {e.short}</h2>
+      <Films films={e.videos} />
     </div>
   </section>
 
@@ -87,6 +105,13 @@ const schema = e.start ? [{
       <Grades />
     </div>
   </section>
+
+  {e.id === 'south' && (
+    <section class="section" aria-label="Photos from Sea to Sea South">
+      <div class="wrap" style="margin-bottom: var(--space-6)"><h2 class="display-lg">On the route</h2></div>
+      <div class="coast-wrap"><CoastGallery items={coastGallery.slice(0, 8)} /></div>
+    </section>
+  )}
 
   <section class="section" id="schedule">
     <div class="wrap">

@@ -9,8 +9,10 @@ import Included from '../components/Included.astro';
 import EditionCards from '../components/EditionCards.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Packages from '../components/Packages.astro';
-import Video from '../components/Video.astro';
-import { site, next as e } from '../data/site';
+import Films from '../components/Films.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import CoastGallery from '../components/CoastGallery.astro';
+import { site, next as e, films } from '../data/site';
 
 const schema = [{
   '@context': 'https://schema.org', '@type': 'SportsEvent', name: `${e.name} ${e.year}`,
@@ -24,7 +26,7 @@ const schema = [{
 ---
 <Base schema={schema}>
   <section class="hero">
-    <div class="hero__img"><Pic name="coast-riders" alt="Two riders stop on a grassy ridge above the Wild Coast" eager /></div>
+    <div class="hero__img"><Pic name="lagoon" alt="A still lagoon winding out to the sea between green hills on the Wild Coast" eager /></div>
     <div class="wrap hero__inner">
       <img class="hero__badge" src="/logos/badge-480.webp" alt="JBFE Sea to Sea, an epic adventure" width="168" height="231" />
       <p class="hero__when"><span>{e.datesLong}</span> · Sea to Sea {e.short}</p>
@@ -58,9 +60,15 @@ const schema = [{
         </div>
         <div class="btn-row"><a class="s2s-btn s2s-btn--secondary" href="#packages">View packages</a></div>
       </div>
-      <div class="split__img"><Pic name="team-beach" alt="A team of riders with arms raised beside their bikes above the beach" sizes="(min-width: 900px) 50vw, 100vw" /></div>
+      <div class="split__img"><Pic name="team-orange" alt="A team of riders grinning beside their bikes" sizes="(min-width: 900px) 50vw, 100vw" /></div>
     </div>
   </section>
+
+  <PhotoBand img="sunset-coast" alt="The sun setting over the Wild Coast, with a river mouth and beach below" tall>
+    <span class="s2s-strap s2s-strap--block">An Epic Adventure</span>
+    <h2 class="display-xl">One of the finest coastlines in the world</h2>
+    <p class="lead">Grassy cliffs, river mouths, empty beaches and the warm Indian Ocean. Three days of it, by dirt bike.</p>
+  </PhotoBand>
 
   <section class="section band">
     <div class="wrap">
@@ -83,6 +91,11 @@ const schema = [{
     </div>
   </section>
 
+  <PhotoBand img="river-crossing" alt="A rider splashing through a rocky river crossing" pos="end">
+    <h2 class="display-lg">Rivers, cliffs and beaches</h2>
+    <p class="lead">Navigate the river crossings, the deep valleys and the remote trails that define this part of South Africa.</p>
+  </PhotoBand>
+
   <section class="section band">
     <div class="wrap">
       <div class="stack" style="max-width: 44em">
@@ -98,7 +111,7 @@ const schema = [{
       <div class="stack sticky-col">
         <h2 class="display-lg">{e.short}: five days, four nights</h2>
         <p class="lead">{e.name} starts and finishes at {e.startHotel}, with two nights at {e.midHotel} in the middle.</p>
-        <div class="split__img"><Pic name="river-mouth" alt="Riders gathered on a dirt road at a river mouth by the sea" sizes="(min-width: 900px) 50vw, 100vw" /></div>
+        <div class="split__img"><Pic name="river-bend" alt="A wide river bend running to the sea between grassy hills" sizes="(min-width: 900px) 50vw, 100vw" /></div>
         <div class="btn-row"><a class="s2s-btn s2s-btn--secondary" href={e.href}>See {e.short} <Icon name="arrow" /></a><a class="s2s-btn s2s-btn--ghost" href={`${e.href}#schedule`}>Full schedule</a></div>
       </div>
       <Days edition={e} />
@@ -136,9 +149,13 @@ const schema = [{
     </div>
   </section>
 
-  <section class="section" style="padding-top: 0">
+  <section class="section band" id="films">
     <div class="wrap">
-      <Video id={site.videoId} poster="speed" title="JBFE Sea to Sea" />
+      <div class="stack" style="max-width: 44em; margin-bottom: var(--space-6)">
+        <h2 class="display-lg">Watch the ride</h2>
+        <p class="lead">Films from the last few editions. Turn the sound up.</p>
+      </div>
+      <Films films={[films.main, ...films.more]} />
     </div>
   </section>
 
@@ -174,20 +191,16 @@ const schema = [{
     </div>
   </section>
 
-  <section class="section" aria-label="Photos from past events">
-    <div class="wrap mosaic">
-      <figure class="w2 h2"><Pic name="coast-aerial" alt="The Wild Coast from the air, with a track along the cliffs" sizes="(min-width: 900px) 50vw, 100vw" /></figure>
-      <figure><Pic name="chopper" alt="The medical helicopter on standby on a grassy headland" sizes="25vw" /></figure>
-      <figure><Pic name="climb" alt="A rider on a steep rocky climb" sizes="25vw" /></figure>
-      <figure class="w2"><Pic name="finish-arch" alt="The JBFE Sea to Sea finish arch" sizes="(min-width: 900px) 50vw, 100vw" /></figure>
-      <figure class="w2"><Pic name="villages" alt="Rondavels on the hills above the sea" sizes="(min-width: 900px) 50vw, 100vw" /></figure>
-      <figure><Pic name="goodie-tent" alt="Goodie bags laid out under the JBFE gazebos at registration" sizes="25vw" /></figure>
-      <figure><Pic name="dunes" alt="Coastal dunes and bush from the air" sizes="25vw" /></figure>
+  <section class="section" aria-label="Photos of the Wild Coast from past rides">
+    <div class="wrap stack" style="max-width: var(--max); margin-bottom: var(--space-6)">
+      <h2 class="display-lg">This is the Transkei</h2>
+      <p class="lead">All shot on the route during Sea to Sea South.</p>
     </div>
+    <div class="coast-wrap"><CoastGallery /></div>
   </section>
 
   <section class="cta-band">
-    <div class="cta-band__img"><Pic name="hole-in-wall" alt="" /></div>
+    <div class="cta-band__img"><Pic name="beach-surf" alt="" /></div>
     <div class="wrap">
       <span class="s2s-strap">An Epic Adventure</span>
       <h2 class="display-lg" style="max-width: 10ch">Get your team in</h2>
