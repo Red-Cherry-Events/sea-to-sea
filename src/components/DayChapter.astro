@@ -1,0 +1,21 @@
+---
+import Pic from './Pic.astro';
+import Icon from './Icon.astro';
+import type { RideDay } from '../data/site';
+interface Props { day: RideDay; flip?: boolean }
+const { day: d, flip = false } = Astro.props;
+---
+<article class={`chapter${flip ? ' chapter--flip' : ''}`}>
+  <div class="chapter__img"><Pic name={d.img} alt={d.alt} sizes="(min-width: 900px) 50vw, 100vw" /></div>
+  <div class="stack">
+    <h3 class="headline">Day {d.n}: {d.from === d.to ? `${d.from} to ${d.to}` : `${d.from} to ${d.to}`}</h3>
+    <ul class="chapter__stats">
+      {d.km && <li class="chapter__km">{d.km} km</li>}
+      {d.date && <li>{d.date}</li>}
+      {d.refuel && <li><Icon name="fuel" />{d.refuel}</li>}
+      {d.lunch && <li><Icon name="meals" />{d.lunch}</li>}
+      {d.routes && <li><Icon name="flag" />{d.routes}</li>}
+    </ul>
+    <div class="prose">{d.body.map((p) => <p>{p}</p>)}</div>
+  </div>
+</article>

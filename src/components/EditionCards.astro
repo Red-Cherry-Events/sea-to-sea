@@ -1,0 +1,19 @@
+---
+import Pic from './Pic.astro';
+import Icon from './Icon.astro';
+import { editions, when } from '../data/site';
+const list = [editions.south, editions.north];
+---
+<div class="editions">
+  {list.map((e) => (
+    <a class="edition" href={e.href}>
+      <Pic name={e.hero} alt={e.heroAlt} sizes="(min-width: 900px) 50vw, 100vw" />
+      <div class="edition__body">
+        <h3 class="display-lg">{e.short}</h3>
+        <p class="edition__when">{when(e)}</p>
+        <p>{e.startHotel} and {e.midHotel}. {e.summary}</p>
+        <span class="edition__go">See {e.short} <Icon name="arrow" /></span>
+      </div>
+    </a>
+  ))}
+</div>

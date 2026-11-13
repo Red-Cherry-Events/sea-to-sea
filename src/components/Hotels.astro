@@ -1,0 +1,20 @@
+---
+import Pic from './Pic.astro';
+import type { Edition } from '../data/site';
+interface Props { edition: Edition }
+const { edition } = Astro.props;
+---
+<div class="hotels">
+  {edition.hotels.map((h) => (
+    <article class="hotel">
+      {h.imgs.length > 0 && (
+        <div class="hotel__imgs">
+          {h.imgs.map((im, i) => <Pic name={im.name} alt={im.alt} sizes={i === 0 ? '(min-width: 900px) 40vw, 100vw' : '(min-width: 900px) 20vw, 50vw'} />)}
+        </div>
+      )}
+      <h3 class="headline">{h.name}</h3>
+      <p class="hotel__when">{h.when}</p>
+      <p>{h.body}</p>
+    </article>
+  ))}
+</div>

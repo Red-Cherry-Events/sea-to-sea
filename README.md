@@ -17,11 +17,16 @@ Create a free form at formspree.io using team@redcherryevents.co.za, then in Ver
 environment variable `PUBLIC_FORMSPREE_ID` (the code after /f/) and redeploy.
 Until then, the form opens the visitor's email app.
 
-## Still to confirm (South 2027)
-- Rider and Supporter prices (`packages[].price`, shows "Price TBC" while null)
-- Deposit amount (`deposit`) and the refund schedule
-- Entry link for South 2027 (`event.enterUrl`)
-- Team size (old pages say 2–6, 2–8 and 2–25; site says 2 to 25)
-- Day distances once routes are ridden in
-- Photos of Trennerys and Kob Inn (current photos are from riding days, plus North hotels which are not used)
+## Two editions
+`src/data/site.ts` holds both rides under `editions`: `south` (7–11 May 2027, Trennerys and Kob Inn) and `north`
+(Ocean View and The Haven). `next` is the one the home page leads with. To open entries, set `entriesOpen: true`
+and `enterUrl` on that edition: every "Get on the list" button becomes "Enter your team".
+
+## Still to confirm
+- Entry links and opening dates for South 2027 and the next North (`entriesOpen`, `enterUrl`)
+- North dates (`dates`, `datesLong`, `dayDates`): shows "Dates to be confirmed" while null
+- South day distances, route write-up and hotel photos (Trennerys, Kob Inn)
+- Race-pack deadline (`racePackCloses`) and South refund cut-off dates (`refunds`)
+- Prices carried from the current site: Rider R12 650, Supporter R11 450, deposit R5 000
+- Rider names for the testimonials
 - Frutiger LT Pro web font licence (self-hosted from the design system)

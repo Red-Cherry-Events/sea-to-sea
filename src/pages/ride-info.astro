@@ -2,64 +2,147 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Pic from '../components/Pic.astro';
-import { event, typicalDay } from '../data/site';
+import Icon from '../components/Icon.astro';
+import Cta from '../components/Cta.astro';
+import Schedule from '../components/Schedule.astro';
+import Video from '../components/Video.astro';
+import { site, editions, next as e, deposit, rand, swapFee } from '../data/site';
+const n = editions.north;
 ---
-<Base title="Ride info" description="Registration, the daily rhythm, luggage and fuel, GPS, meals, safety and cancellations for JBFE Sea to Sea.">
-  <PageHead title="Ride info" img="registration" lead="Everything you need to know before you load the bakkie." />
+<Base title="Ride info" description="Registration, parking, the schedule, riders' briefing, GPS downloads, meals, water points, luggage and fuel, safety and the cancellation policy for JBFE Sea to Sea.">
+  <PageHead title="Ride information" img="registration" lead="Everything you need to know before you load the bakkie." />
 
-  <section class="section" style="padding-top: var(--space-6)">
+  <section class="section" style="padding-top: var(--space-6)" id="registration">
     <div class="wrap split" style="align-items: start">
       <div class="stack">
-        <h2 class="headline">A day on the bike</h2>
-        <p class="body muted">Riding days run like this. The briefing each evening sets the details for the next day, and your whole team needs to be there.</p>
-        <dl class="timetable">
-          {typicalDay.map(([t, what]) => <div><dt>{t}</dt><dd>{what}</dd></div>)}
-        </dl>
+        <h2 class="display-lg">Ride registration</h2>
+        <div class="prose">
+          <p class="lead">{e.short}: registration is at {e.registration.where}, {e.registration.when}.</p>
+          <p>{n.short}: {n.registration.where}, {n.registration.when.toLowerCase()}.</p>
+          <p>Riders within a team must register together. No late registrations will be allowed unless by prior arrangement with the organisers.</p>
+        </div>
+        <div>
+          <h3 class="title" style="margin-bottom: var(--space-3)">What you need to bring</h3>
+          <ul class="plain-list">
+            <li><Icon name="gps" /><span>Your GPS, for the route download</span></li>
+            <li><Icon name="check" /><span>Your helmet, for the safety check</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="title" style="margin-bottom: var(--space-2)">Parking</h3>
+          <p class="body">All vehicles and trailers are parked securely inside the start hotel for the duration of the trip.</p>
+        </div>
+        <div class="btn-row"><a class="s2s-btn s2s-btn--secondary" href="/the-journey/">View the route</a><a class="s2s-btn s2s-btn--ghost" href="/contact-us/#message">Request more info</a></div>
       </div>
-      <div class="split__img"><Pic name="rider-ktm" alt="A rider in full kit on his KTM outside a thatched rondavel" sizes="(min-width: 900px) 50vw, 100vw" /></div>
+      <div class="split__img"><Pic name="goodie-tent" alt="Goodie bags laid out under the JBFE gazebos at registration" sizes="(min-width: 900px) 50vw, 100vw" /></div>
     </div>
   </section>
 
-  <section class="section band">
+  <section class="section band" id="schedule">
+    <div class="wrap">
+      <div class="stack" style="max-width: 44em; margin-bottom: var(--space-6)">
+        <h2 class="display-lg">Schedule of events</h2>
+        <p class="lead">{e.name}, {e.datesLong}. North runs to the same timetable from {n.startHotel} and {n.midHotel}.</p>
+      </div>
+      <Schedule edition={e} />
+    </div>
+  </section>
+
+  <section class="section" id="briefing">
     <div class="wrap facts-list">
       <div>
-        <h3>Registration</h3>
-        <p class="body">Arrive Fri 7 May at {event.startHotel}. Collect your room keys for the whole event, your goodie bag and race pack, and get your helmet checked. Riders on a team register together. No late registrations unless you arrange it with us first.</p>
+        <h3>Riders’ briefing</h3>
+        <p class="body">The pre-ride briefing is at the start hotel at 20:00 on arrival evening, after dinner. There’s a briefing at 20:30 every evening after that.</p>
       </div>
       <div>
-        <h3>Luggage and fuel</h3>
-        <p class="body">Drop your bag and fuel at the luggage truck by 07:30 on moving days. Your bag is in your room when you arrive. Fuel and lunch wait for you at the water point. Your vehicle and trailer stay parked securely at the hotel.</p>
+        <h3>Attendance is essential</h3>
+        <p class="body">Your whole team must be at the riders’ briefing each evening. The Red Cherry team shares important route and safety information that everyone needs to hear.</p>
       </div>
       <div>
-        <h3>GPS routes</h3>
-        <p class="body">Routes go out by email to every entrant before the event. We can help load them at registration, but only on Garmin eTrex units, so arrive with yours charged.</p>
+        <h3>Join the WhatsApp group</h3>
+        <p class="body">Loads of important information goes out on the Sea to Sea WhatsApp group. Invites go out the week of the event. Make sure you’re added and you’ll never miss a thing.</p>
       </div>
       <div>
-        <h3>Meals and drinks</h3>
-        <p class="body">Breakfast from 06:30, lunch at the water point and dinner every night. Tell us about dietary needs when you enter. Drinks at the hotel bar are for your own account.</p>
+        <h3>Rider Hub</h3>
+        <p class="body">Event information, rider details, updates and routes, on your phone or desktop. <a href={site.riderHubUrl} rel="noopener">Visit the Rider Hub</a></p>
       </div>
-      <div>
-        <h3>Safety</h3>
-        <p class="body">Full medical backup and chopper standby. Sweeps, medics and recovery vehicles are out on every route, with checkpoints and time bars along the way. Stick to the route and the briefing.</p>
+    </div>
+  </section>
+
+  <section class="section band" id="gps">
+    <div class="wrap split">
+      <div class="split__img"><Pic name="gps" alt="Two Garmin eTrex GPS units on a table" small sizes="(min-width: 900px) 50vw, 100vw" /></div>
+      <div class="stack">
+        <h2 class="display-lg">GPS download</h2>
+        <div class="prose">
+          <p class="lead">Routes are emailed to all riders in the week of the event.</p>
+          <p>If you have problems getting the routes onto your GPS, we can help at registration. Bring your GPS with you and our crew will gladly load them.</p>
+          <p><strong>Please note:</strong> we can only assist with Garmin eTrex devices. We’ll do our best with other brands, but we can’t guarantee the transfer will work.</p>
+        </div>
       </div>
-      <div>
-        <h3>Rooms</h3>
-        <p class="body">Teams may share rooms. If you’re entering as a group and want to be together, tell us when you enter.</p>
+    </div>
+  </section>
+
+  <section class="section" id="nutrition">
+    <div class="wrap">
+      <h2 class="display-lg" style="margin-bottom: var(--space-6)">Meals and drinks</h2>
+      <div class="facts-list">
+        <div>
+          <h3>At the hotels</h3>
+          <p class="body">Breakfast, lunch and dinner are supplied every day. Lunch is informal. Breakfast and dinner are sit-down meals.</p>
+          <dl class="timetable" style="margin-top: var(--space-4)">
+            <div><dt>06:30 – 07:30</dt><dd>Breakfast</dd></div>
+            <div><dt>Midday</dt><dd>Lunch at the water points</dd></div>
+            <div><dt>18:00 – 19:00</dt><dd>Dinner</dd></div>
+          </dl>
+        </div>
+        <div>
+          <h3>Dietary requirements</h3>
+          <p class="body">Vegetarian, vegan, allergies? Let us know when you enter and we’ll happily accommodate.</p>
+          <h3 style="margin-top: var(--space-6)">Beverages</h3>
+          <p class="body">Alcoholic and soft drinks are on sale at the hotel bar. We supply single-source water at the water points and for each stage.</p>
+        </div>
+        <div>
+          <h3>En route</h3>
+          <p class="body">There are 1 or 2 water points each day, with energy drinks, cold water, Coke and snacks. Check the route notes for the distances between water points, and pack a few extra snacks.</p>
+        </div>
+        <div>
+          <h3>Luggage and fuel</h3>
+          <p class="body">Drop your kit and fuel at the luggage truck before 07:30. Water point 2 usually keeps lunch and fuel for each rider. Your bags are waiting in your room when you arrive.</p>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section band" id="safety">
+    <div class="wrap split">
+      <div class="stack">
+        <h2 class="display-lg">Backup and safety</h2>
+        <div class="prose">
+          <p class="lead">Full medical backup and chopper standby, with sweeps, medics and recovery vehicles on route.</p>
+          <p>There are checkpoints on the route and time bars in place. Keep a steady pace, stick to the route and the briefing, and you’ll get in safely and in time.</p>
+        </div>
+      </div>
+      <div class="split__img"><Pic name="chopper" alt="The medical helicopter on standby on a grassy headland, with riders nearby" sizes="(min-width: 900px) 50vw, 100vw" /></div>
     </div>
   </section>
 
   <section class="section">
-    <div class="wrap split">
-      <div class="split__img"><Pic name="gps" alt="Two Garmin eTrex GPS units on a table" small sizes="(min-width: 900px) 50vw, 100vw" /></div>
-      <div class="stack">
-        <h2 class="headline">Cancellations and swaps</h2>
-        <div class="prose">
-          <p>Can’t make it? Swap your spot to another rider any time for R50 using “change ownership” on your entry page.</p>
-          <p>Deposits are non-refundable. The refund schedule for {event.year} is published with entries, and the later you cancel, the less comes back.</p>
-          <p class="muted small">Questions about your entry? <a href="/contact-us/">Talk to us</a>.</p>
-        </div>
+    <div class="wrap">
+      <Video id={site.rideInfoVideoId} poster="rider-ktm" title="JBFE Sea to Sea ride info" label="Watch the ride" />
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0" id="cancellation">
+    <div class="wrap stack">
+      <h2 class="display-lg">Cancellation policy</h2>
+      <div class="prose">
+        <p class="lead">A {rand(deposit)} per person non-refundable deposit confirms your entry. The balance is payable 2 months before the event.</p>
+        <p>If you cancel in writing, this is what comes back. The dates below are for the October ride (North). South’s dates are confirmed when entries open.</p>
       </div>
+      {n.refunds && <dl class="refunds">{n.refunds.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>}
+      <p class="body">Riders can substitute at any time for a fee of R{swapFee}. <a href={site.loginUrl} rel="noopener">Log in to your entry</a> and choose “change ownership”.</p>
+      <div class="btn-row"><Cta /><a class="s2s-btn s2s-btn--ghost" href={e.href}>View the accommodation</a></div>
     </div>
   </section>
 </Base>

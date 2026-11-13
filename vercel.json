@@ -5,12 +5,12 @@
   "redirects": [
     {
       "source": "/the-journey-3",
-      "destination": "/the-journey/",
+      "destination": "/north/",
       "permanent": true
     },
     {
       "source": "/the-journey-3/",
-      "destination": "/the-journey/",
+      "destination": "/north/",
       "permanent": true
     },
     {

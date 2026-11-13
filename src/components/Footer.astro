@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { contact, sponsors, otherEvents, event } from '../data/site';
+import { contact, sponsors, otherEvents, site } from '../data/site';
 const year = new Date().getFullYear();
 ---
 <footer class="site-foot">
@@ -21,15 +21,18 @@ const year = new Date().getFullYear();
         <ul>
           <li><a href={contact.phoneHref}>{contact.phone}</a></li>
           <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>
-          <li class="muted small">{contact.hours}</li>
-          <li><a href={event.loginUrl} rel="noopener">Manage your entry</a></li>
+          <li class="small">{contact.hoursShort}</li>
+          <li class="small">{contact.address.join(', ')}</li>
+          <li><a href={site.loginUrl} rel="noopener">Log in to my entry</a></li>
+          <li><a href={site.riderHubUrl} rel="noopener">Rider Hub</a></li>
         </ul>
       </div>
       <div>
-        <h2>More from Red Cherry</h2>
-        <ul>
-          {otherEvents.map((e) => <li><a href={e.href} rel="noopener">{e.name}</a></li>)}
-        </ul>
+        <h2>Our trusted brands</h2>
+        <p class="small" style="margin-bottom: var(--space-4)">More motorcycle events built by the Red Cherry Events team.</p>
+        <div class="brands">
+          {otherEvents.map((e) => <a href={e.href} rel="noopener"><img src={e.logo} alt={e.name} width="72" height="72" loading="lazy" /></a>)}
+        </div>
       </div>
     </div>
     <div class="site-foot__base small">

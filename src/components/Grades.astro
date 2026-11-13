@@ -1,0 +1,15 @@
+---
+import Pic from './Pic.astro';
+import Grade from './Grade.astro';
+import { grades } from '../data/site';
+---
+<div class="grades">
+  {grades.map((g) => (
+    <article class="grade">
+      <Pic name={g.img} alt={g.alt} sizes="(min-width: 900px) 33vw, 100vw" />
+      <div><Grade id={g.id} name={g.name} dots={g.dots} /></div>
+      <h3 class="grade__who">{g.who}</h3>
+      <p>{g.body}</p>
+    </article>
+  ))}
+</div>

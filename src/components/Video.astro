@@ -1,11 +1,11 @@
 ---
 import Icon from './Icon.astro';
-interface Props { id: string; poster: string; title: string }
-const { id, poster, title } = Astro.props;
+interface Props { id: string; poster: string; title: string; label?: string }
+const { id, poster, title, label = 'Watch the film' } = Astro.props;
 ---
 <div class="video" data-video={id}>
   <img src={`/img/${poster}-1600.webp`} alt="" loading="lazy" decoding="async" width="1600" height="900" />
-  <button type="button" aria-label={`Play video: ${title}`}><span><Icon name="play" /> Watch the film</span></button>
+  <button type="button" aria-label={`Play video: ${title}`}><span><Icon name="play" /> {label}</span></button>
 </div>
 <script>
   document.querySelectorAll<HTMLElement>('[data-video]').forEach((el) => {

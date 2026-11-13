@@ -1,0 +1,16 @@
+---
+import { schedule, type Edition } from '../data/site';
+interface Props { edition: Edition }
+const { edition } = Astro.props;
+const days = schedule(edition);
+---
+<div class="sched">
+  {days.map((d) => (
+    <section class="sched__day">
+      <h3>{d.label}{d.date && <span> · {d.date}</span>}</h3>
+      <dl class="timetable">
+        {d.rows.map(([t, what]) => <div><dt>{t}</dt><dd>{what}</dd></div>)}
+      </dl>
+    </section>
+  ))}
+</div>

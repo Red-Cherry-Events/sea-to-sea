@@ -1,0 +1,8 @@
+---
+import { testimonials } from '../data/site';
+---
+<div class="quotes">
+  {testimonials.map((t, i) => (
+    <blockquote class={i === 0 ? 'quote quote--lead' : 'quote'}><p>“{t.quote}”</p>{t.name && <footer>{t.name}</footer>}</blockquote>
+  ))}
+</div>

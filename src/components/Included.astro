@@ -1,0 +1,9 @@
+---
+import Icon from './Icon.astro';
+import { included } from '../data/site';
+---
+<div class="included">
+  {included.map((i) => (
+    <div class="inc"><Icon name={i.icon} /><div><h3>{i.h}</h3><p>{i.p}</p></div></div>
+  ))}
+</div>

@@ -1,59 +1,61 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import Pic from '../components/Pic.astro';
-import Grade from '../components/Grade.astro';
-import Days from '../components/Days.astro';
-import { event, grades } from '../data/site';
+import Grades from '../components/Grades.astro';
+import EditionCards from '../components/EditionCards.astro';
+import Cta from '../components/Cta.astro';
+import { site } from '../data/site';
 ---
-<Base title="The route" description={`Three days on the Wild Coast: ${event.startHotel} to ${event.midHotel} and back, on Gold, Silver or Adventure routes.`}>
-  <PageHead title="The route" img="coast-aerial" lead={`A round trip through the tribal lands of the Transkei. ${event.startHotel} to ${event.midHotel}, a loop, and back again.`} />
+<Base title="The journey" description="3 days of riding around the tribal lands of the Transkei on Gold, Silver or Adventure routes. See what's in store on JBFE Sea to Sea South and North.">
+  <PageHead title="The journey" img="coast-aerial" lead="3 days of riding around the tribal lands of the Transkei. Here’s what is in store for you on this Epic Adventure." />
 
   <section class="section" style="padding-top: var(--space-6)">
-    <div class="wrap split" style="align-items: start">
-      <div class="stack">
-        <h2 class="headline">Day by day</h2>
-        <p class="body muted">Distances for {event.year} are confirmed once the routes are ridden in. The average day is about 80 km. GPS routes go out by email to every entrant the week before the ride.</p>
-        <div class="split__img"><Pic name="speed" alt="A rider at speed on a dirt road across green hills" sizes="(min-width: 900px) 50vw, 100vw" /></div>
+    <div class="wrap">
+      <div class="stack" style="max-width: 44em">
+        <h2 class="display-lg">3 routes available</h2>
+        <p class="lead">Every day you choose between Gold, Silver and Adventure. Gold and Silver split and rejoin through the day, so a team can mix and still meet up.</p>
       </div>
-      <Days />
+      <Grades />
     </div>
   </section>
 
   <section class="section band">
     <div class="wrap">
-      <h2 class="display-lg">Three grades</h2>
-      <div class="grades">
-        {grades.map((g) => (
-          <article class="grade">
-            <Pic name={g.img} alt={g.alt} sizes="(min-width: 900px) 33vw, 100vw" />
-            <div><Grade id={g.id} name={g.name} dots={g.dots} /></div>
-            <h3 class="grade__who">{g.who}</h3>
-            <p>{g.body}</p>
-          </article>
-        ))}
+      <div class="stack" style="max-width: 44em">
+        <h2 class="display-lg">Day by day</h2>
+        <p class="lead">Each edition has its own route, hotels and day-by-day write-up.</p>
       </div>
+      <EditionCards />
     </div>
   </section>
 
   <section class="section">
     <div class="wrap facts-list">
       <div>
+        <h3>How a riding day is built</h3>
+        <p class="body">About {site.avgDayKm} km a day on Gold and Silver, and about 120 km on Adventure. Each day has 1 or 2 water points, a refuel point where the distance needs it, and a lunch stop. Checkpoints and time bars are there for safety.</p>
+      </div>
+      <div>
         <h3>Which bike?</h3>
-        <p class="body">Gold and Silver are for enduro bikes, ideally with an electric start. Adventure is for the big bikes: T7, 790, Africa Twin. Skilled riders bring 1250s and 1290s.</p>
+        <p class="body">Gold and Silver are only suitable for enduro bikes, preferably with an electric start. Adventure is for the T7, 790, Africa Twin and the like. Skilled riders could tackle it on a 1290 or 1250.</p>
       </div>
       <div>
         <h3>Bringing the kids</h3>
-        <p class="body">Kids are usually 10 and up. Riders on 65s with long-range fuel tanks take on the Silver routes, and we move fuel out on the route for the small bikes.</p>
+        <p class="body">Riders on 65s with long-range fuel tanks take on the Silver routes, usually from 10 years old. We move fuel to extra points on the route so every bike makes the distance.</p>
       </div>
       <div>
         <h3>Navigation</h3>
-        <p class="body">It’s a navigational enduro, so you ride with a GPS. We can help load routes at registration, but only on Garmin eTrex units.</p>
+        <p class="body">You navigate by GPS. Routes are emailed to every rider before the event, and we can load them for you at registration on Garmin eTrex devices. <a href="/ride-info/#gps">More on GPS</a></p>
       </div>
       <div>
         <h3>Riding through communities</h3>
         <p class="body">The routes cross the tribal lands of the Transkei and run through villages. Ride slowly past homes, livestock and kids, and greet people. We’re guests here.</p>
       </div>
+      <div>
+        <h3>The finish</h3>
+        <p class="body">A free cold beer waits on the finish line every day. Day 3 ends under the JBFE Sea to Sea arch, and the last night is medals, prize-giving and a few fines.</p>
+      </div>
     </div>
+    <div class="wrap btn-row" style="margin-top: var(--space-7)"><Cta /><a class="s2s-btn s2s-btn--ghost" href="/ride-info/">Ride info</a></div>
   </section>
 </Base>

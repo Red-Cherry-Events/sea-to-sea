@@ -1,0 +1,9 @@
+---
+// The one primary action. When entries are closed it becomes "Get on the list".
+import { next, type Edition } from '../data/site';
+interface Props { edition?: Edition; variant?: 'primary' | 'ghost' | 'secondary'; label?: string }
+const { edition = next, variant = 'primary', label } = Astro.props;
+---
+{edition.entriesOpen
+  ? <a class={`s2s-btn s2s-btn--${variant}`} href={edition.enterUrl} rel="noopener">{label ?? 'Enter your team'}</a>
+  : <a class={`s2s-btn s2s-btn--${variant}`} href={`/contact-us/?about=${edition.id}#message`}>Get on the list</a>}
