@@ -66,7 +66,7 @@ export const editions: Record<'south' | 'north', Edition> = {
     start: '2027-05-07', end: '2027-05-11',
     dayDates: ['Fri 7 May', 'Sat 8 May', 'Sun 9 May', 'Mon 10 May', 'Tue 11 May'],
     startHotel: 'Trennerys Hotel (Seagulls)', midHotel: 'Kob Inn', region: 'the southern Wild Coast',
-    totalKm: null,
+    totalKm: 237,
     entriesOpen: true,
     enterUrl: 'https://entries.redcherryevents.co.za/events/84861',
     racePackCloses: null,
@@ -78,13 +78,56 @@ export const editions: Record<'south' | 'north', Edition> = {
     ],
     hero: 'sunset-coast', heroAlt: 'Sunset over the southern Wild Coast, with the river mouth and beach below',
     hotels: [
-      { name: 'Trennerys Hotel (Seagulls)', when: 'Registration night and the night after Day 3', body: 'Where it starts and ends. Your vehicle and trailer stay parked here while you ride.', imgs: [] },
-      { name: 'Kob Inn', when: 'The nights after Day 1 and Day 2', body: 'Two nights in one place, so Day 2 starts without packing a bag.', imgs: [] },
+      {
+        name: 'Trennerys and Seagulls', when: 'Registration night and the night after Day 3',
+        body: 'Riders and supporters stay in a combination of Trennerys and Seagulls on the first night. Room numbers for all 4 nights are handed out at registration with your race pack. You finish back here after Day 3: a bar on the beach, plenty of war stories, prize-giving, and your car parked safely where you left it.',
+        imgs: [
+          { name: 'trennerys-aerial', alt: 'Trennerys and Seagulls from the air at sunrise, in the trees above the beach and river mouth' },
+          { name: 'trennerys-arch', alt: 'The Sea to Sea arch set up in the garden at Trennerys for registration' },
+          { name: 'trennerys-room', alt: 'A double room at Trennerys' },
+        ],
+      },
+      {
+        name: 'Kob Inn', when: 'The nights after Day 1 and Day 2',
+        body: 'The finest hotel on the Wild Coast, on the banks of the Qora River. Each team is allocated a room to share and everyone gets their own bed. Some of the larger family units mean teams may share, so tell us if you’re entering as a group. You can book your own room during registration for an extra fee.',
+        imgs: [
+          { name: 'kob-units', alt: 'Thatched units at Kob Inn on the lawn above the sea' },
+          { name: 'kob-reception', alt: 'Dirt bikes parked beside the Kob Inn reception sign' },
+          { name: 'kob-room', alt: 'A room at Kob Inn with doors opening onto the lawn and the sea' },
+        ],
+      },
     ],
     days: [
-      { n: 1, date: 'Sat 8 May', from: 'Trennerys', to: 'Kob Inn', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'river-cliff', alt: 'A river winding to the sea below forested cliffs', body: ['North up the coast through the tribal lands of the Transkei to Kob Inn.'] },
-      { n: 2, date: 'Sun 9 May', from: 'Kob Inn', to: 'Kob Inn', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'river-crossing', alt: 'A rider splashing through a rocky river crossing', body: ['An out-ride from Kob Inn, with options to go Wild or keep it Mild. No packing up.'] },
-      { n: 3, date: 'Mon 10 May', from: 'Kob Inn', to: 'Trennerys', km: null, refuel: '', lunch: '', routes: 'Gold, Silver and Adventure', img: 'beach-ride', alt: 'A rider on the hard sand of a Wild Coast beach', body: ['Back down the coast to the finish arch. Done and Dusted! Prize-giving and medals that night.'] },
+      {
+        n: 1, date: 'Sat 8 May', from: 'Trennerys', to: 'Kob Inn', km: 85,
+        refuel: '1 refuel point', lunch: '1 lunch stop', routes: '3 Mild and Wild splits, 1 Adventure route',
+        img: 'river-cliff', alt: 'A river winding to the sea below forested cliffs',
+        body: [
+          'We leave Seagulls and ride inland up the Qolora River valley, keeping the sea on our left, then head up the coast to the magnificent Kob Inn on the banks of the Qora River.',
+          'The route crosses the Kobonqaba, Cebe and Qolora rivers, and each crossing comes with some of the finest enduro riding on the planet. Boulders, The Gorge and Coconuts are all on the menu.',
+          'The last big challenge of the day is the mighty Qora Gorge, between Mazeppa Bay and Kob Inn. Luggage moves today.',
+        ],
+      },
+      {
+        n: 2, date: 'Sun 9 May', from: 'Kob Inn', to: 'Kob Inn', km: 60,
+        refuel: '1 refuel point', lunch: '1 lunch stop, 2 water points', routes: '3 Mild and Wild splits, 1 Adventure route',
+        img: 'river-crossing', alt: 'A rider splashing through a rocky river crossing',
+        body: [
+          'Two nights at Kob Inn means no packing up, and that makes for an easier start.',
+          'We carry on up the coast across the Jujura, Ngadla and Shixini rivers, then turn inland at the mighty Nqabara River. Riding inland has its own challenges as we navigate the sled and single-track paths through each river on the way.',
+          'Most riders should be home by lunch, with the afternoon for the pool, the beach or a few cold ones at the bar.',
+        ],
+      },
+      {
+        n: 3, date: 'Mon 10 May', from: 'Kob Inn', to: 'Trennerys', km: 92,
+        refuel: '1 refuel point', lunch: '1 lunch stop', routes: '2 Mild and Wild splits, 1 Adventure route',
+        img: 'beach-ride', alt: 'A rider on the hard sand of a Wild Coast beach',
+        body: [
+          'The coastal ride back to Trennerys leaves the best for last. Day 3 has to be the most insane day you could wish for on a motorcycle.',
+          'It’s a day you don’t want to race. Take in the views of the Wild Coast. The finish line is at Boulders, where the JBFE Sea to Sea arch and a cold beer wait for you, then it’s a 5-minute tar ride to Trennerys.',
+          'JBFE Sea to Sea South… Done and Dusted! Luggage moves today.',
+        ],
+      },
     ],
     videos: [
       { id: 'G2_grtw-Ou8', title: 'Day 3, Sea to Sea South 2025', poster: 'beach-surf' },
