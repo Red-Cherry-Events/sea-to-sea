@@ -1,0 +1,29 @@
+---
+// Shared click-to-play for every [data-video] block. Warms up YouTube on hover so playback starts fast,
+// and keeps the poster on screen until the player has loaded.
+---
+<script>
+  let warmed = false;
+  const warm = () => {
+    if (warmed) return; warmed = true;
+    for (const h of ['https://www.youtube.com', 'https://www.google.com', 'https://i.ytimg.com', 'https://static.doubleclick.net', 'https://jnn-pa.googleapis.com']) {
+      const l = document.createElement('link'); l.rel = 'preconnect'; l.href = h; l.crossOrigin = ''; document.head.appendChild(l);
+    }
+  };
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((el) => {
+    const btn = el.querySelector('button');
+    el.addEventListener('pointerenter', warm, { once: true });
+    btn?.addEventListener('focus', warm, { once: true });
+    btn?.addEventListener('click', () => {
+      warm();
+      el.classList.add('is-loading');
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube.com/embed/${el.dataset.video}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+      f.title = btn.getAttribute('aria-label') ?? 'Video';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      f.addEventListener('load', () => { el.classList.remove('is-loading'); el.classList.add('is-playing'); btn.remove(); });
+      el.appendChild(f);
+    });
+  });
+</script>

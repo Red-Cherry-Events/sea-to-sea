@@ -1,0 +1,349 @@
+---
+// Interactive route explorer: topo map, Gold / Silver / Adventure tracks per day, live elevation profile.
+// Data comes from /public/routes/<edition>.json (built from the GPS tracks). Regenerate, don't hand-edit.
+import Icon from './Icon.astro';
+import type { Edition } from '../data/site';
+interface Props { edition: Edition; routeYear?: number }
+const { edition: e, routeYear = 2026 } = Astro.props;
+const days = e.days.map((d) => ({ id: `d${d.n}`, label: `Day ${d.n}`, from: d.from, to: d.to }));
+---
+<div class="rx" data-rx={e.id} data-days={JSON.stringify(days)}>
+  <div class="rx__bar">
+    <div class="rx__tabs" role="tablist" aria-label="Riding day">
+      {days.map((d, i) => (
+        <button type="button" role="tab" class="rx__tab" data-day={d.id} aria-selected={i === 0 ? 'true' : 'false'}>
+          <b>{d.label}</b><span>{d.from === d.to ? `${d.from} loop` : `${d.from} to ${d.to}`}</span>
+        </button>
+      ))}
+    </div>
+    <div class="rx__grades" role="group" aria-label="Route grade"></div>
+  </div>
+
+  <dl class="rx__stats" aria-live="polite">
+    <div><dt>Distance</dt><dd data-s="km">–</dd></div>
+    <div><dt>Climbing</dt><dd data-s="climb">–</dd></div>
+    <div><dt>Highest point</dt><dd data-s="max">–</dd></div>
+    <div class="rx__here"><dt>You are here</dt><dd data-s="here">Drag along the profile</dd></div>
+  </dl>
+
+  <div class="rx__map" tabindex="0" aria-label={`Map of the ${e.short} routes. Drag to move, pinch or use the buttons to zoom.`}>
+    <svg class="rx__svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <image class="rx__base" x="0" y="0" />
+      <g class="rx__tracks"></g>
+      <g class="rx__pins"></g>
+      <g class="rx__dot"><circle class="rx__dot-halo" /><circle class="rx__dot-core" /></g>
+    </svg>
+    <div class="rx__ctl">
+      <button type="button" data-z="in" aria-label="Zoom in">+</button>
+      <button type="button" data-z="out" aria-label="Zoom out">−</button>
+      <button type="button" data-z="fit" aria-label="Fit the whole day">Fit</button>
+    </div>
+    <button type="button" class="rx__play s2s-btn s2s-btn--primary"><Icon name="play" /><b>Ride it</b></button>
+    <p class="rx__loading">Loading the route…</p>
+  </div>
+
+  <div class="rx__profile" role="slider" tabindex="0" aria-label="Position along the route" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <svg class="rx__psvg" preserveAspectRatio="none" aria-hidden="true">
+      <g class="rx__pghost"></g>
+      <path class="rx__parea" /><path class="rx__pline" />
+      <line class="rx__pcur" y1="0" />
+    </svg>
+    <div class="rx__paxis"><span data-a="min"></span><span data-a="mid"></span><span data-a="end"></span></div>
+    <span class="rx__ptop" data-a="top"></span>
+  </div>
+
+  <p class="rx__note small muted">
+    These are the {routeYear} tracks, so expect tweaks for the next ride. GPS files go out to entered riders before the event.
+    Map data © OpenStreetMap contributors, SRTM. Map style © OpenTopoMap (CC-BY-SA).
+  </p>
+</div>
+
+<script>
+  type Pt = [number, number, number];
+  type Track = { km: number; climb: number; max: number; p: Pt[] };
+  type Data = { W: number; H: number; days: Record<string, Record<string, Track>> };
+  const GRADES: Record<string, { name: string; color: string }> = {
+    gold: { name: 'Gold', color: '#d4a017' },
+    silver: { name: 'Silver', color: '#a7abb0' },
+    adventure: { name: 'Adventure', color: '#59caf5' },
+  };
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = <K extends keyof SVGElementTagNameMap>(n: K, a: Record<string, string | number> = {}) => {
+    const x = document.createElementNS(NS, n);
+    for (const k in a) x.setAttribute(k, String(a[k]));
+    return x;
+  };
+
+  function init(root: HTMLElement, data: Data) {
+    const id = root.dataset.rx!;
+    const days: { id: string; label: string; from: string; to: string }[] = JSON.parse(root.dataset.days!);
+    const svg = root.querySelector<SVGSVGElement>('.rx__svg')!;
+    const map = root.querySelector<HTMLElement>('.rx__map')!;
+    const gTracks = svg.querySelector<SVGGElement>('.rx__tracks')!;
+    const gPins = svg.querySelector<SVGGElement>('.rx__pins')!;
+    const dot = svg.querySelector<SVGGElement>('.rx__dot')!;
+    const base = svg.querySelector<SVGImageElement>('.rx__base')!;
+    const prof = root.querySelector<HTMLElement>('.rx__profile')!;
+    const psvg = root.querySelector<SVGSVGElement>('.rx__psvg')!;
+    const gradesBox = root.querySelector<HTMLElement>('.rx__grades')!;
+    const stat = (k: string) => root.querySelector<HTMLElement>(`[data-s="${k}"]`)!;
+    const axis = (k: string) => root.querySelector<HTMLElement>(`[data-a="${k}"]`)!;
+    const playBtn = root.querySelector<HTMLButtonElement>('.rx__play')!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    base.setAttribute('width', String(data.W));
+    base.setAttribute('height', String(data.H));
+    base.setAttribute('href', `/routes/${id}-topo${innerWidth < 760 ? '-sm' : ''}.webp`);
+    root.classList.add('is-ready');
+
+    let day = days[0].id;
+    let grade = 'gold';
+    let frac = 0; // position along the active track, 0..1
+    let view = { x: 0, y: 0, w: data.W, h: data.H };
+    let raf = 0;
+    let playing = 0;
+
+    const track = () => data.days[day][grade];
+    const scale = () => view.w / map.clientWidth; // map units per CSS px
+
+    // cumulative distance per point (px space is fine for interpolation)
+    const cum = new Map<Track, number[]>();
+    const cumOf = (t: Track) => {
+      let c = cum.get(t);
+      if (!c) { c = [0]; for (let i = 1; i < t.p.length; i++) c.push(c[i - 1] + Math.hypot(t.p[i][0] - t.p[i - 1][0], t.p[i][1] - t.p[i - 1][1])); cum.set(t, c); }
+      return c;
+    };
+    const at = (t: Track, f: number): Pt => {
+      const c = cumOf(t), target = f * c[c.length - 1];
+      let lo = 0, hi = c.length - 1;
+      while (hi - lo > 1) { const m = (lo + hi) >> 1; if (c[m] <= target) lo = m; else hi = m; }
+      const span = c[hi] - c[lo] || 1, k = (target - c[lo]) / span, a = t.p[lo], b = t.p[hi];
+      return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+    };
+    const pathD = (t: Track) => 'M' + t.p.map((p) => `${p[0]} ${p[1]}`).join('L');
+
+    function applyView() {
+      const ar = map.clientWidth / map.clientHeight;
+      // keep the viewBox the same shape as the box so nothing is cropped oddly
+      let { x, y, w, h } = view;
+      if (w / h > ar) { const nh = w / ar; y -= (nh - h) / 2; h = nh; } else { const nw = h * ar; x -= (nw - w) / 2; w = nw; }
+      svg.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+      const s = w / map.clientWidth;
+      root.style.setProperty('--rx-s', String(s));
+      dot.querySelector('.rx__dot-halo')!.setAttribute('r', String(13 * s));
+      dot.querySelector('.rx__dot-core')!.setAttribute('r', String(6 * s));
+      gPins.querySelectorAll<SVGGElement>('g').forEach((g) => g.setAttribute('transform', `translate(${g.dataset.x} ${g.dataset.y}) scale(${s})`));
+    }
+    function clampView(v: typeof view) {
+      const ar = map.clientWidth / map.clientHeight;
+      // largest view that still sits inside the basemap once it is widened to the box shape
+      const maxW = Math.min(data.W, data.H * ar) * (v.w / Math.max(v.w, v.h * ar));
+      const minW = 180;
+      const k = Math.min(Math.max(v.w, minW), maxW) / v.w;
+      const cx = v.x + v.w / 2, cy = v.y + v.h / 2;
+      v.w *= k; v.h *= k; v.x = cx - v.w / 2; v.y = cy - v.h / 2;
+      const ew = Math.max(v.w, v.h * ar), eh = ew / ar; // expanded size actually shown
+      const cx2 = Math.min(Math.max(v.x + v.w / 2, ew / 2), data.W - ew / 2), cy2 = Math.min(Math.max(v.y + v.h / 2, eh / 2), data.H - eh / 2);
+      v.x = cx2 - v.w / 2; v.y = cy2 - v.h / 2;
+      return v;
+    }
+    function flyTo(target: typeof view, ms = 550) {
+      cancelAnimationFrame(raf);
+      if (reduce || ms === 0) { view = clampView(target); applyView(); return; }
+      const from = { ...view }, t0 = performance.now();
+      const step = (now: number) => {
+        const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 4);
+        view = { x: from.x + (target.x - from.x) * e, y: from.y + (target.y - from.y) * e, w: from.w + (target.w - from.w) * e, h: from.h + (target.h - from.h) * e };
+        applyView();
+        if (k < 1) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    }
+    function fit(ms = 550) {
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (const g in data.days[day]) for (const p of data.days[day][g].p) { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); }
+      const pad = Math.max(x1 - x0, y1 - y0) * 0.12 + 40;
+      flyTo(clampView({ x: x0 - pad, y: y0 - pad, w: x1 - x0 + pad * 2, h: y1 - y0 + pad * 2 }), ms);
+    }
+    function zoom(factor: number, cx?: number, cy?: number, ms = 250) {
+      const px = cx ?? view.x + view.w / 2, py = cy ?? view.y + view.h / 2;
+      const w = view.w * factor, h = view.h * factor;
+      flyTo(clampView({ x: px - (px - view.x) * factor, y: py - (py - view.y) * factor, w, h }), ms);
+    }
+
+    function pin(x: number, y: number, label: string, kind: string) {
+      const g = el('g', { class: `rx__pin rx__pin--${kind}` });
+      g.dataset.x = String(x); g.dataset.y = String(y);
+      g.append(el('circle', { r: 7 }));
+      const t = el('text', { x: 12, y: 5 }); t.textContent = label; g.append(t);
+      gPins.append(g);
+    }
+
+    function drawGrades() {
+      gradesBox.replaceChildren();
+      const have = Object.keys(data.days[day]);
+      if (!have.includes(grade)) grade = have[0];
+      for (const g of have) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = `rx__grade s2s-grade s2s-grade--${g}`; b.setAttribute('aria-pressed', String(g === grade));
+        b.textContent = `${GRADES[g].name} · ${Math.round(data.days[day][g].km)} km`;
+        b.addEventListener('click', () => { grade = g; stop(); render(false); });
+        gradesBox.append(b);
+      }
+    }
+
+    function drawProfile() {
+      const t = track(), W = 1000, H = 200, c = cumOf(t), total = c[c.length - 1];
+      let lo = 1e9, hi = -1e9;
+      for (const g in data.days[day]) for (const p of data.days[day][g].p) { lo = Math.min(lo, p[2]); hi = Math.max(hi, p[2]); }
+      hi = Math.max(hi, lo + 60);
+      const X = (i: number, tr: Track) => (cumOf(tr)[i] / cumOf(tr)[tr.p.length - 1]) * W;
+      const Y = (e: number) => H - 6 - ((e - lo) / (hi - lo)) * (H - 22);
+      psvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      const line = (tr: Track) => 'M' + tr.p.map((p, i) => `${X(i, tr).toFixed(1)} ${Y(p[2]).toFixed(1)}`).join('L');
+      const ghost = psvg.querySelector('.rx__pghost')!; ghost.replaceChildren();
+      for (const g in data.days[day]) if (g !== grade) ghost.append(el('path', { d: line(data.days[day][g]), stroke: GRADES[g].color }));
+      const d = line(t);
+      const area = psvg.querySelector<SVGPathElement>('.rx__parea')!, pl = psvg.querySelector<SVGPathElement>('.rx__pline')!;
+      area.setAttribute('d', `${d}L${W} ${H}L0 ${H}Z`); area.setAttribute('fill', GRADES[grade].color);
+      pl.setAttribute('d', d); pl.setAttribute('stroke', GRADES[grade].color);
+      psvg.querySelector('.rx__pcur')!.setAttribute('y2', String(H));
+      axis('min').textContent = '0 km'; axis('mid').textContent = `${Math.round(t.km / 2)} km`; axis('end').textContent = `${Math.round(t.km)} km`;
+      axis('top').textContent = `${hi} m`;
+    }
+
+    function setFrac(f: number, follow = false) {
+      frac = Math.min(1, Math.max(0, f));
+      const t = track(), p = at(t, frac);
+      dot.setAttribute('transform', `translate(${p[0]} ${p[1]})`);
+      dot.style.color = GRADES[grade].color;
+      psvg.querySelector('.rx__pcur')!.setAttribute('x1', String(frac * 1000));
+      psvg.querySelector('.rx__pcur')!.setAttribute('x2', String(frac * 1000));
+      stat('here').textContent = `${(frac * t.km).toFixed(1)} km · ${Math.round(p[2])} m`;
+      prof.setAttribute('aria-valuenow', String(Math.round(frac * 100)));
+      prof.setAttribute('aria-valuetext', `${(frac * t.km).toFixed(1)} kilometres, ${Math.round(p[2])} metres above sea level`);
+      if (follow) {
+        const mx = view.w * 0.3, my = view.h * 0.3;
+        if (p[0] < view.x + mx || p[0] > view.x + view.w - mx || p[1] < view.y + my || p[1] > view.y + view.h - my) {
+          view = clampView({ ...view, x: view.x + (p[0] - (view.x + view.w / 2)) * 0.08, y: view.y + (p[1] - (view.y + view.h / 2)) * 0.08 });
+          applyView();
+        }
+      }
+    }
+
+    function render(refit = true) {
+      root.querySelectorAll<HTMLElement>('.rx__tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.day === day)));
+      drawGrades();
+      gTracks.replaceChildren(); gPins.replaceChildren();
+      const order = Object.keys(data.days[day]).sort((a, b) => Number(a === grade) - Number(b === grade));
+      for (const g of order) {
+        const d = pathD(data.days[day][g]), on = g === grade;
+        gTracks.append(el('path', { d, class: `rx__case${on ? ' is-on' : ''}` }), el('path', { d, class: `rx__line${on ? ' is-on' : ''}`, stroke: GRADES[g].color }));
+      }
+      const t = track(), info = days.find((d) => d.id === day)!;
+      const a = t.p[0], b = t.p[t.p.length - 1];
+      if (Math.hypot(a[0] - b[0], a[1] - b[1]) < 40) pin(a[0], a[1], info.from, 'both');
+      else { pin(a[0], a[1], info.from, 'start'); pin(b[0], b[1], info.to, 'end'); }
+      stat('km').textContent = `${t.km.toFixed(1)} km`;
+      stat('climb').textContent = `${t.climb.toLocaleString('en-ZA').replace(/,/g, ' ')} m`;
+      stat('max').textContent = `${t.max} m`;
+      drawProfile();
+      setFrac(refit ? 0 : frac);
+      if (refit) fit(); else applyView();
+    }
+
+    // ----- ride it -----
+    function stop() { cancelAnimationFrame(playing); playing = 0; playBtn.querySelector('b')!.textContent = 'Ride it'; root.classList.remove('is-riding'); }
+    playBtn.addEventListener('click', () => {
+      if (playing) return stop();
+      root.classList.add('is-riding'); playBtn.querySelector('b')!.textContent = 'Stop';
+      if (frac > 0.98) frac = 0;
+      const dur = 22000, f0 = frac, t0 = performance.now();
+      zoom(Math.min(1, 620 / view.w), ...((p) => [p[0], p[1]] as [number, number])(at(track(), frac)), 400);
+      const tick = (now: number) => {
+        const f = f0 + ((now - t0) / dur) * (1 - f0);
+        setFrac(f, true);
+        if (f >= 1) { stop(); fit(); return; }
+        playing = requestAnimationFrame(tick);
+      };
+      setTimeout(() => { if (root.classList.contains('is-riding')) playing = requestAnimationFrame(tick); }, 420);
+    });
+
+    // ----- tabs, zoom buttons -----
+    root.querySelectorAll<HTMLElement>('.rx__tab').forEach((b) => b.addEventListener('click', () => { day = b.dataset.day!; stop(); render(); }));
+    root.querySelectorAll<HTMLElement>('[data-z]').forEach((b) => b.addEventListener('click', () => {
+      const z = b.dataset.z; if (z === 'fit') fit(); else zoom(z === 'in' ? 0.6 : 1.6);
+    }));
+
+    // ----- map pan / pinch / hover -----
+    const toMap = (e: { clientX: number; clientY: number }) => {
+      const r = map.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+      return [vb.x + ((e.clientX - r.left) / r.width) * vb.width, vb.y + ((e.clientY - r.top) / r.height) * vb.height] as [number, number];
+    };
+    const nearest = (mx: number, my: number) => {
+      const t = track(), c = cumOf(t); let best = 0, bd = 1e12;
+      for (let i = 0; i < t.p.length; i++) { const d = (t.p[i][0] - mx) ** 2 + (t.p[i][1] - my) ** 2; if (d < bd) { bd = d; best = i; } }
+      return { f: c[best] / c[c.length - 1], d: Math.sqrt(bd) };
+    };
+    const ptrs = new Map<number, PointerEvent>();
+    let last: { x: number; y: number; dist: number } | null = null;
+    let moved = false;
+    map.addEventListener('pointerdown', (e) => {
+      if ((e.target as HTMLElement).closest('button')) return;
+      ptrs.set(e.pointerId, e); moved = false; last = null;
+      if (e.pointerType === 'mouse' || ptrs.size === 2) map.setPointerCapture(e.pointerId);
+    });
+    map.addEventListener('pointermove', (e) => {
+      if (!ptrs.has(e.pointerId)) {
+        if (e.pointerType === 'mouse' && !playing) { const [mx, my] = toMap(e); const n = nearest(mx, my); if (n.d < 26 * scale()) setFrac(n.f); }
+        return;
+      }
+      ptrs.set(e.pointerId, e);
+      const ps = [...ptrs.values()];
+      if (ps.length === 1 && e.pointerType !== 'mouse') { const [mx, my] = toMap(e); const n = nearest(mx, my); if (n.d < 40 * scale()) { stop(); setFrac(n.f); } return; }
+      const cx = ps.reduce((s, p) => s + p.clientX, 0) / ps.length, cy = ps.reduce((s, p) => s + p.clientY, 0) / ps.length;
+      const dist = ps.length > 1 ? Math.hypot(ps[0].clientX - ps[1].clientX, ps[0].clientY - ps[1].clientY) : 0;
+      if (last) {
+        const s = scale(); cancelAnimationFrame(raf); stop();
+        view.x -= (cx - last.x) * s; view.y -= (cy - last.y) * s;
+        if (dist && last.dist) { const f = last.dist / dist, [px, py] = toMap({ clientX: cx, clientY: cy }); view = { x: px - (px - view.x) * f, y: py - (py - view.y) * f, w: view.w * f, h: view.h * f }; }
+        view = clampView(view); applyView(); moved = true;
+      }
+      last = { x: cx, y: cy, dist };
+    });
+    const up = (e: PointerEvent) => { ptrs.delete(e.pointerId); last = null; };
+    map.addEventListener('pointerup', up); map.addEventListener('pointercancel', up);
+    map.addEventListener('dblclick', (e) => { if ((e.target as HTMLElement).closest('button')) return; const [x, y] = toMap(e); zoom(0.55, x, y); });
+    map.addEventListener('wheel', (e) => { if (!e.ctrlKey && !e.metaKey) return; e.preventDefault(); const [x, y] = toMap(e); zoom(e.deltaY > 0 ? 1.25 : 0.8, x, y, 0); }, { passive: false });
+    map.addEventListener('keydown', (e) => {
+      const s = view.w * 0.15;
+      if (e.key === '+' || e.key === '=') zoom(0.6); else if (e.key === '-') zoom(1.6);
+      else if (e.key === 'ArrowLeft') flyTo(clampView({ ...view, x: view.x - s }), 150); else if (e.key === 'ArrowRight') flyTo(clampView({ ...view, x: view.x + s }), 150);
+      else if (e.key === 'ArrowUp') flyTo(clampView({ ...view, y: view.y - s }), 150); else if (e.key === 'ArrowDown') flyTo(clampView({ ...view, y: view.y + s }), 150);
+      else return; e.preventDefault();
+    });
+
+    // ----- profile scrub -----
+    const scrub = (e: PointerEvent) => { const r = prof.getBoundingClientRect(); stop(); setFrac((e.clientX - r.left) / r.width); };
+    prof.addEventListener('pointerdown', (e) => { prof.setPointerCapture(e.pointerId); scrub(e); });
+    prof.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' || prof.hasPointerCapture(e.pointerId)) scrub(e); });
+    prof.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 0.1 : 0.01;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') setFrac(frac + step); else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') setFrac(frac - step);
+      else if (e.key === 'Home') setFrac(0); else if (e.key === 'End') setFrac(1); else return; e.preventDefault();
+    });
+
+    new ResizeObserver(() => applyView()).observe(map);
+    render(); fit(0);
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-rx]').forEach((root) => {
+    const io = new IntersectionObserver(async (entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      try { init(root, await (await fetch(`/routes/${root.dataset.rx}.json`)).json()); }
+      catch { root.querySelector('.rx__loading')!.textContent = 'The route map could not load. Refresh the page to try again.'; }
+    }, { rootMargin: '600px' });
+    io.observe(root);
+  });
+</script>

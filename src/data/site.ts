@@ -6,7 +6,7 @@ export const site = {
   teamsMax: 60,
   teamSize: '2 to 25 riders',
   avgDayKm: 80,
-  riderHubUrl: 'https://riderapp.redcherryevents.co.za/',
+  riderHubUrl: 'https://riderhub.redcherryevents.co.za/',
   loginUrl: 'https://entries.redcherryevents.co.za/registrations',
   entriesHome: 'https://entries.redcherryevents.co.za/',
   fieldsPdf: '/docs/entry-fields.pdf',
@@ -32,7 +32,10 @@ export const contact = {
 
 /* ---------- The two editions ---------- */
 
+export type Film = { id: string; title: string; poster?: string };
+
 export type RideDay = {
+  video?: string;
   n: number; date: string | null; from: string; to: string; km: number | null;
   refuel: string; lunch: string; routes: string; img: string; alt: string; body: string[];
 };
@@ -48,12 +51,13 @@ export type Edition = {
   startHotel: string; midHotel: string; region: string;
   totalKm: number | null;
   entriesOpen: boolean; enterUrl: string;
+  hubUrl: string; // this edition's page in the Red Cherry Rider Hub
   racePackCloses: string | null;
   summary: string; intro: string[];
   hero: string; heroAlt: string;
   hotels: { name: string; when: string; body: string; imgs: { name: string; alt: string }[] }[];
   days: RideDay[];
-  videos: { id: string; title: string; poster: string }[];
+  videos: Film[];
   registration: { when: string; where: string };
   gpsSent: string | null;
   refunds: [string, string][] | null;
@@ -66,9 +70,10 @@ export const editions: Record<'south' | 'north', Edition> = {
     start: '2027-05-07', end: '2027-05-11',
     dayDates: ['Fri 7 May', 'Sat 8 May', 'Sun 9 May', 'Mon 10 May', 'Tue 11 May'],
     startHotel: 'Trennerys Hotel (Seagulls)', midHotel: 'Kob Inn', region: 'the southern Wild Coast',
-    totalKm: 237,
+    totalKm: 209,
     entriesOpen: true,
     enterUrl: 'https://entries.redcherryevents.co.za/events/84861',
+    hubUrl: 'https://riderhub.redcherryevents.co.za/my-events/42f7bfbb-0811-4427-b4bb-211f540189e5',
     racePackCloses: null,
     summary: 'From the southernmost hotels in the Transkei, north along the Wild Coast to Kob Inn and back.',
     intro: [
@@ -99,7 +104,8 @@ export const editions: Record<'south' | 'north', Edition> = {
     ],
     days: [
       {
-        n: 1, date: 'Sat 8 May', from: 'Trennerys', to: 'Kob Inn', km: 85,
+        video: 'oVuiUxGXJ4k',
+        n: 1, date: 'Sat 8 May', from: 'Trennerys', to: 'Kob Inn', km: 77,
         refuel: '1 refuel point', lunch: '1 lunch stop', routes: '3 Mild and Wild splits, 1 Adventure route',
         img: 'river-cliff', alt: 'A river winding to the sea below forested cliffs',
         body: [
@@ -109,7 +115,8 @@ export const editions: Record<'south' | 'north', Edition> = {
         ],
       },
       {
-        n: 2, date: 'Sun 9 May', from: 'Kob Inn', to: 'Kob Inn', km: 60,
+        video: 'PjtljE58pdY',
+        n: 2, date: 'Sun 9 May', from: 'Kob Inn', to: 'Kob Inn', km: 50,
         refuel: '1 refuel point', lunch: '1 lunch stop, 2 water points', routes: '3 Mild and Wild splits, 1 Adventure route',
         img: 'river-crossing', alt: 'A rider splashing through a rocky river crossing',
         body: [
@@ -119,7 +126,8 @@ export const editions: Record<'south' | 'north', Edition> = {
         ],
       },
       {
-        n: 3, date: 'Mon 10 May', from: 'Kob Inn', to: 'Trennerys', km: 92,
+        video: 'hWGVSXTY4VM',
+        n: 3, date: 'Mon 10 May', from: 'Kob Inn', to: 'Trennerys', km: 82,
         refuel: '1 refuel point', lunch: '1 lunch stop', routes: '2 Mild and Wild splits, 1 Adventure route',
         img: 'beach-ride', alt: 'A rider on the hard sand of a Wild Coast beach',
         body: [
@@ -130,9 +138,19 @@ export const editions: Record<'south' | 'north', Edition> = {
       },
     ],
     videos: [
-      { id: 'G2_grtw-Ou8', title: 'Day 3, Sea to Sea South 2025', poster: 'beach-surf' },
-      { id: 'WBAWFe604Bs', title: 'Day 2, Sea to Sea South 2025', poster: 'river-bend' },
-      { id: '7y2TuVIxAss', title: 'Highlights from Sea to Sea South 2024', poster: 'estuary-sun' },
+      { id: 'JLYuJvkMTEw', title: 'Full highlights, JBFE Sea to Sea South 2026', poster: 'lagoon' },
+      { id: '-FyDxM1O0-k', title: 'Registration, South 2026' },
+      { id: 'oVuiUxGXJ4k', title: 'Day 1, South 2026' },
+      { id: 'PjtljE58pdY', title: 'Day 2, South 2026' },
+      { id: 'hWGVSXTY4VM', title: 'Day 3, South 2026' },
+      { id: 'nHZTbl2KueI', title: 'Ready for an Epic Adventure to the South? 2025' },
+      { id: 'odZ0ms98czE', title: 'Registration Day, South 2025' },
+      { id: '9YasYbY6xs0', title: 'Day 1, South 2025' },
+      { id: 'WBAWFe604Bs', title: 'Day 2, South 2025' },
+      { id: 'G2_grtw-Ou8', title: 'Day 3, South 2025' },
+      { id: '82LaaA-cggw', title: 'JBFE Sea to Sea South 2024' },
+      { id: '7y2TuVIxAss', title: 'Highlights from South 2024' },
+      { id: 'Sqp8C6sW-eM', title: 'Sea to Sea South 2023' },
     ],
     registration: { when: 'Fri 7 May, 14:00 – 19:00', where: 'Trennerys Hotel (Seagulls)' },
     gpsSent: null,
@@ -143,9 +161,10 @@ export const editions: Record<'south' | 'north', Edition> = {
     year: null, dates: null, datesLong: null, start: null, end: null,
     dayDates: [null, null, null, null, null],
     startHotel: 'Ocean View Hotel', midHotel: 'The Haven Hotel', region: 'Coffee Bay and the Dwesa Nature Reserve',
-    totalKm: 201,
+    totalKm: 250,
     entriesOpen: false,
     enterUrl: 'https://entries.redcherryevents.co.za/',
+    hubUrl: 'https://riderhub.redcherryevents.co.za/my-events/2544f097-ba01-416a-8f51-dbd8af33f5de',
     racePackCloses: null,
     summary: 'Coffee Bay to the Mbashee River mouth and back, past Hole in the Wall.',
     intro: [
@@ -176,7 +195,7 @@ export const editions: Record<'south' | 'north', Edition> = {
     ],
     days: [
       {
-        n: 1, date: null, from: 'Ocean View Hotel', to: 'The Haven Hotel', km: 75,
+        n: 1, date: null, from: 'Ocean View Hotel', to: 'The Haven Hotel', km: 88,
         refuel: '1 refuel point', lunch: '1 lunch stop', routes: 'Gold and Silver splits, 1 Adventure route',
         img: 'coast-aerial', alt: 'The Wild Coast from the air, with a track running along the cliffs',
         body: [
@@ -186,17 +205,18 @@ export const editions: Record<'south' | 'north', Edition> = {
         ],
       },
       {
-        n: 2, date: null, from: 'The Haven', to: 'The Haven', km: 52,
-        refuel: 'No refuel needed', lunch: 'Lunch at The Haven Hotel', routes: 'Gold and Silver splits, 1 Adventure route',
+        n: 2, date: null, from: 'The Haven', to: 'The Haven', km: 90,
+        refuel: '', lunch: '', routes: 'Gold and Silver splits, 1 Adventure route',
         img: 'track', alt: 'A jeep track winding across green hills towards the sea',
         body: [
           'Two nights at The Haven means no packing up, and that makes for an easier start.',
           'The hotel sits on the banks of the Mbashee River, and the Mbashee valley is a playground second to none. Riding inland has its own challenges as we navigate the sled and single-track paths through each river on the way.',
-          'Most riders should be home by lunch and can spend the afternoon at the pool, on the beach or having a few cold ones at the bar. There are Silver and Gold options, so pick your poison and decide how much work you want to do.',
+          'On the 2026 tracks this is the longest day of the three, ridden in two sections. Afterwards it’s the pool, the beach or a few cold ones at the bar. There are Silver and Gold options, so pick your poison and decide how much work you want to do.',
         ],
       },
       {
-        n: 3, date: null, from: 'The Haven Hotel', to: 'Ocean View Hotel', km: 74,
+        video: '49vOeACUTwM',
+        n: 3, date: null, from: 'The Haven Hotel', to: 'Ocean View Hotel', km: 71,
         refuel: '1 refuel point', lunch: '1 lunch stop', routes: 'Gold and Silver splits, 1 Adventure route',
         img: 'finish-arch', alt: 'The JBFE Sea to Sea finish arch',
         body: [
@@ -208,7 +228,12 @@ export const editions: Record<'south' | 'north', Edition> = {
     ],
     videos: [
       { id: 'buvMPIk9lSc', title: 'Sea to Sea North 2026: on-bike highlights', poster: 'hole-in-wall' },
-      { id: 'IztEg2E2-ls', title: 'It doesn’t happen overnight: Sea to Sea North', poster: 'coast-aerial' },
+      { id: 'pChxDjeNE68', title: 'Routes are here, North 2026' },
+      { id: 'Ee1K5i6xnnc', title: 'Sea to Sea recce with Mike, North 2026' },
+      { id: '49vOeACUTwM', title: 'Day 3 route, North 2026' },
+      { id: 'St3qMOi5bKU', title: 'JBFE Sea to Sea North 2025' },
+      { id: 'IztEg2E2-ls', title: 'It doesn’t happen overnight, North' },
+      { id: 'W8zzf7qyoGQ', title: 'North 2024 highlights' },
     ],
     registration: { when: 'Arrival day, 14:00 – 19:00', where: 'The front lawn at Ocean View Hotel' },
     gpsSent: null,
@@ -337,18 +362,19 @@ export const otherEvents = [
 ];
 
 export const films = {
-  main: { id: '82LaaA-cggw', title: 'JBFE Sea to Sea South 2024', poster: 'lagoon' },
+  main: { id: 'JLYuJvkMTEw', title: 'Full highlights, JBFE Sea to Sea South 2026', poster: 'lagoon' },
   more: [
-    { id: '7y2TuVIxAss', title: 'Highlights from Sea to Sea South 2024', poster: 'estuary-sun' },
+    { id: '82LaaA-cggw', title: 'JBFE Sea to Sea South 2024', poster: 'estuary-sun' },
     { id: 'buvMPIk9lSc', title: 'Sea to Sea North 2026: on-bike highlights', poster: 'hole-in-wall' },
     { id: 'ijrwd36K5t4', title: 'Come riding with us on the Wild Side', poster: 'beach-ride' },
   ],
   journey: [
+    { id: 'nHZTbl2KueI', title: 'Ready for an Epic Adventure to the South?', poster: 'gorge' },
     { id: 'ijrwd36K5t4', title: 'Come riding with us on the Wild Side', poster: 'dune-climb' },
     { id: 'G2_grtw-Ou8', title: 'Day 3, Sea to Sea South 2025', poster: 'beach-surf' },
   ],
   rideInfo: { id: 'St3qMOi5bKU', title: 'JBFE Sea to Sea ride info', poster: 'rider-ktm' },
-  enter: { id: 'WBAWFe604Bs', title: 'Day 2, Sea to Sea South 2025', poster: 'river-bend' },
+  enter: { id: '-FyDxM1O0-k', title: 'Registration, South 2026', poster: 'river-bend' },
 };
 
 // Photo sets (names in /public/img). The coastline first.

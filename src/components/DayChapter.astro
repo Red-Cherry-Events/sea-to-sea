@@ -1,6 +1,7 @@
 ---
 import Pic from './Pic.astro';
 import Icon from './Icon.astro';
+import Films from './Films.astro';
 import type { RideDay } from '../data/site';
 interface Props { day: RideDay; flip?: boolean }
 const { day: d, flip = false } = Astro.props;
@@ -17,5 +18,6 @@ const { day: d, flip = false } = Astro.props;
       {d.routes && <li><Icon name="flag" />{d.routes}</li>}
     </ul>
     <div class="prose">{d.body.map((p) => <p>{p}</p>)}</div>
+    {d.video && <div class="chapter__film"><Films films={[{ id: d.video, title: `Watch Day ${d.n}` }]} /></div>}
   </div>
 </article>

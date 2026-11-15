@@ -1,29 +1,22 @@
 ---
-// A row of YouTube films. Each loads only when played.
+// A set of YouTube films. Each loads only when played. With more than 4, the first plays big and the rest sit in a grid.
 import Icon from './Icon.astro';
-interface Props { films: { id: string; title: string; poster: string }[] }
+import FilmScript from './FilmScript.astro';
+import type { Film } from '../data/site';
+interface Props { films: Film[] }
 const { films } = Astro.props;
+const cls = films.length > 4 ? 'films films--lib' : `films films--${films.length}`;
+const poster = (f: Film) => (f.poster ? `/img/${f.poster}-800.webp` : `https://i.ytimg.com/vi/${f.id}/hqdefault.jpg`);
 ---
-<div class={`films films--${films.length}`}>
+<div class={cls}>
   {films.map((f) => (
     <figure class="film">
-      <div class="video" data-video={f.id}>
-        <img src={`/img/${f.poster}-800.webp`} alt="" loading="lazy" decoding="async" width="800" height="450" />
-        <button type="button" aria-label={`Play video: ${f.title}`}><span><Icon name="play" /> Play</span></button>
+      <div class="video" data-video={f.id} style={`background-image:url(https://i.ytimg.com/vi/${f.id}/hqdefault.jpg)`}>
+        <img src={poster(f)} alt="" loading="lazy" decoding="async" fetchpriority="low" width="800" height="450" />
+        <button type="button" aria-label={`Play video: ${f.title}`}><span><Icon name="play" /><b>Play</b></span></button>
       </div>
       <figcaption>{f.title}</figcaption>
     </figure>
   ))}
 </div>
-<script>
-  document.querySelectorAll<HTMLElement>('.film [data-video]').forEach((el) => {
-    el.querySelector('button')?.addEventListener('click', () => {
-      const f = document.createElement('iframe');
-      f.src = `https://www.youtube-nocookie.com/embed/${el.dataset.video}?autoplay=1&rel=0`;
-      f.title = el.querySelector('button')?.getAttribute('aria-label') ?? 'Video';
-      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-      f.allowFullscreen = true;
-      el.replaceChildren(f);
-    });
-  });
-</script>
+<FilmScript />

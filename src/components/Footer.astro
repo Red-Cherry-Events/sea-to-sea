@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { contact, sponsors, otherEvents, site } from '../data/site';
+import { contact, sponsors, otherEvents, site, next } from '../data/site';
 const year = new Date().getFullYear();
 ---
 <footer class="site-foot">
@@ -24,7 +24,7 @@ const year = new Date().getFullYear();
           <li class="small">{contact.hoursShort}</li>
           <li class="small">{contact.address.join(', ')}</li>
           <li><a href={site.loginUrl} rel="noopener">Log in to my entry</a></li>
-          <li><a href={site.riderHubUrl} rel="noopener">Rider Hub</a></li>
+          <li><a href={next.hubUrl} rel="noopener">Rider Hub</a></li>
         </ul>
       </div>
       <div>
