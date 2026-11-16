@@ -7,7 +7,7 @@ import Cta from '../components/Cta.astro';
 import Schedule from '../components/Schedule.astro';
 import Video from '../components/Video.astro';
 import PhotoBand from '../components/PhotoBand.astro';
-import { site, editions, next as e, deposit, rand, swapFee, films } from '../data/site';
+import { site, editions, next as e, deposit, rand, swapFee, films, refundsFor, when } from '../data/site';
 const n = editions.north;
 ---
 <Base title="Ride info" description="Registration, parking, the schedule, riders' briefing, GPS downloads, meals, water points, luggage and fuel, safety and the cancellation policy for JBFE Sea to Sea.">
@@ -144,9 +144,17 @@ const n = editions.north;
       <h2 class="display-lg">Cancellation policy</h2>
       <div class="prose">
         <p class="lead">A {rand(deposit)} per person non-refundable deposit confirms your entry. The balance is payable 2 months before the event.</p>
-        <p>If you cancel in writing, this is what comes back. The dates below are for the October ride (North). South’s dates are confirmed when entries open.</p>
+        <p>If you cancel in writing, this is what comes back. Both rides use the same scale, counted back from the month the ride starts.</p>
       </div>
-      {n.refunds && <dl class="refunds">{n.refunds.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>}
+      {[editions.south, editions.north].map((ed) => {
+        const rows = refundsFor(ed);
+        return rows && (
+          <div>
+            <h3 class="title" style="margin-bottom: var(--space-2)">{ed.short} · {ed.start ? when(ed) : 'October ride'}</h3>
+            <dl class="refunds">{rows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+          </div>
+        );
+      })}
       <p class="body">Riders can substitute at any time for a fee of R{swapFee}. <a href={site.loginUrl} rel="noopener">Log in to your entry</a> and choose “change ownership”.</p>
       <div class="btn-row"><Cta /><a class="s2s-btn s2s-btn--ghost" href={e.href}>View the accommodation</a></div>
     </div>
