@@ -60,7 +60,7 @@ export type Edition = {
   videos: Film[];
   registration: { when: string; where: string };
   gpsSent: string | null;
-  refunds: [string, string][] | null;
+  refunds: [string, string][] | null; // only used while `start` is unknown; otherwise worked out by refundsFor()
 };
 
 export const editions: Record<'south' | 'north', Edition> = {
@@ -237,15 +237,38 @@ export const editions: Record<'south' | 'north', Edition> = {
     ],
     registration: { when: 'Arrival day, 14:00 – 19:00', where: 'The front lawn at Ocean View Hotel' },
     gpsSent: null,
-    // Refund cut-offs as published for the October ride.
+    // Refund cut-offs as published for the October ride. Once `start` is set,
+    // refundsFor() works them out from the date instead.
     refunds: [
       ['Before 1 June', '75% of the entry fee back, less the deposit'],
       ['Before 1 July', '50% of the entry fee back, less the deposit'],
       ['Before 1 August', '25% of the entry fee back, less the deposit'],
-      ['After 2 August', 'No refund, but you still get your goody bag'],
+      ['From 1 August', 'No refund, but you still get your goody bag'],
     ],
   },
 };
+/**
+ * Cancellation scale, the same for every edition: cut-offs fall on the 1st of the
+ * month 4, 3 and 2 months before the month the ride starts (October ride: 1 June,
+ * 1 July, 1 August). Set an edition's `start` and its table updates itself.
+ */
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+export const refundsFor = (e: Edition): [string, string][] | null => {
+  if (!e.start) return e.refunds;
+  const [y, m] = e.start.split('-').map(Number); // m is 1–12
+  const cut = (back: number) => {
+    const d = new Date(Date.UTC(y, m - 1 - back, 1));
+    const yr = d.getUTCFullYear() !== y ? ` ${d.getUTCFullYear()}` : '';
+    return `1 ${MONTHS[d.getUTCMonth()]}${yr}`;
+  };
+  return [
+    [`Before ${cut(4)}`, '75% of the entry fee back, less the deposit'],
+    [`Before ${cut(3)}`, '50% of the entry fee back, less the deposit'],
+    [`Before ${cut(2)}`, '25% of the entry fee back, less the deposit'],
+    [`From ${cut(2)}`, 'No refund, but you still get your goody bag'],
+  ];
+};
+
 export const next = editions.south; // the edition the home page leads with
 
 /* ---------- Schedule: the same rhythm for both editions ---------- */
