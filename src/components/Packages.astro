@@ -6,7 +6,7 @@ interface Props { edition?: Edition }
 const { edition = next } = Astro.props;
 ---
 <div class="s2s-packages">
-  {packages.map((p, i) => (
+  {packages.filter((p) => p.id !== 'no-hassle' || edition.id === 'south').map((p, i) => (
     <article class={`s2s-package${i === 0 ? ' s2s-package--lead' : ''}`}>
       <h3 class="s2s-package__name">{p.name}</h3>
       <p class={`s2s-package__price${p.price == null ? ' is-tbc' : ''}`}>{rand(p.price)}{p.price != null && <span> {p.unit}</span>}</p>
