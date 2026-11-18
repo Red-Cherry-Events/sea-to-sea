@@ -13,7 +13,7 @@ import Films from './Films.astro';
 import RouteExplorer from './RouteExplorer.astro';
 import PhotoBand from './PhotoBand.astro';
 import CoastGallery from './CoastGallery.astro';
-import { site, when, editions, coastGallery, type Edition } from '../data/site';
+import { site, when, editions, coastGallery, eventSchema, type Edition } from '../data/site';
 interface Props { edition: Edition }
 const { edition: e } = Astro.props;
 const other = e.id === 'south' ? editions.north : editions.south;
@@ -21,16 +21,12 @@ const full = e.days.every((d) => d.km);
 const band = e.id === 'south'
   ? { img: 'estuary-sun', alt: 'Morning light over a river mouth on the southern Wild Coast', h: 'Wild Coast mornings', p: 'Mist on the river mouths, cliffs above the sea, and nobody on the beach but your team.' }
   : { img: 'coast-aerial', alt: 'The Wild Coast from the air, with a track running along the cliffs', h: 'Dirt bike heaven', p: 'Mdumbi, Mpuzi, Mpami, Lapanzi and Hole in the Wall, all in three days of riding.' };
-const schema = e.start ? [{
-  '@context': 'https://schema.org', '@type': 'SportsEvent', name: `${e.name} ${e.year}`,
-  startDate: e.start, endDate: e.end, eventStatus: 'https://schema.org/EventScheduled',
-  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-  location: { '@type': 'Place', name: e.startHotel, address: { '@type': 'PostalAddress', addressRegion: 'Eastern Cape', addressCountry: 'ZA' } },
-  organizer: { '@type': 'Organization', name: 'Red Cherry Events', url: 'https://www.redcherryevents.co.za/' },
-  description: e.summary,
-}] : [];
+const schema = eventSchema(e);
+const share = e.id === 'south'
+  ? { image: '/og/south.jpg', imageAlt: 'A rider crossing a river on the southern Wild Coast, with the JBFE Sea to Sea badge' }
+  : { image: '/og/north.jpg', imageAlt: 'A rider and two bikes above Hole in the Wall, with the JBFE Sea to Sea badge' };
 ---
-<Base title={e.short} description={`${e.name}: ${e.startHotel} to ${e.midHotel} and back. ${e.summary} ${when(e)}.`} schema={schema}>
+<Base title={e.short} description={`${e.name}: ${e.startHotel} to ${e.midHotel} and back. ${e.summary} ${when(e)}.`} schema={schema} {...share}>
   <section class="page-head">
     <div class="page-head__img"><Pic name={e.hero} alt={e.heroAlt} eager /></div>
     <div class="wrap">
