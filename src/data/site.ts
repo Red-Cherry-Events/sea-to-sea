@@ -321,6 +321,17 @@ export const packages = [
       'Sea to Sea supporters’ apparel',
     ],
   },
+  {
+    id: 'no-hassle', name: 'No Hassle package', price: 7500 as number | null, unit: 'per rider',
+    note: 'Optional extra for South, added to your rider entry. You fly, we bring your bike.',
+    items: [
+      'We transport your bike to the event and back',
+      'Drop your bike at RAD KTM in Johannesburg or Triumph Cape Town by the Friday before the event',
+      'Fly in to East London on registration day, landing before 13:00',
+      'Shuttle from East London airport to the hotel',
+      'Shuttle back to the airport on the last day (book your flight out for after 11:00)',
+    ],
+  },
 ];
 export const deposit = 5000 as number | null;
 export const swapFee = 50;
