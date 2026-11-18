@@ -322,7 +322,7 @@ export const packages = [
     ],
   },
   {
-    id: 'no-hassle', name: 'No Hassle package', price: 7500 as number | null, unit: 'per rider',
+    id: 'no-hassle', name: 'No Hassle package', price: 6950 as number | null, unit: 'per rider',
     note: 'Optional extra for South, added to your rider entry. You fly, we bring your bike.',
     items: [
       'We transport your bike to the event and back',
