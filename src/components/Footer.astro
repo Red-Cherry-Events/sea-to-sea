@@ -11,9 +11,10 @@ const year = new Date().getFullYear();
         <a href={sponsors.title.href} rel="noopener" aria-label="JBFE"><img class="site-foot__tiles" src="/logos/jbfe-tiles-on-gravel.png" alt="JBFE" width="180" height="60" loading="lazy" /></a>
         <h2 style="margin-top: var(--space-5)">Supported by</h2>
         <div class="sponsors">
-          {sponsors.supporters.map((s) => s.href
-            ? <a href={s.href} rel="noopener"><img src={s.logo} alt={s.name} loading="lazy" /></a>
-            : <img src={s.logo} alt={s.name} loading="lazy" />)}
+          {sponsors.supporters.map((s) => {
+            const mark = s.logo ? <img src={s.logo} alt={s.name} loading="lazy" /> : <span class="sponsors__name">{s.name}</span>;
+            return s.href ? <a href={s.href} rel="noopener">{mark}</a> : mark;
+          })}
         </div>
       </div>
       <div>

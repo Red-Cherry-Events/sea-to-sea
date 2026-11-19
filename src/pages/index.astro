@@ -12,17 +12,9 @@ import Packages from '../components/Packages.astro';
 import Films from '../components/Films.astro';
 import PhotoBand from '../components/PhotoBand.astro';
 import CoastGallery from '../components/CoastGallery.astro';
-import { site, next as e, films } from '../data/site';
+import { site, next as e, films, eventSchema } from '../data/site';
 
-const schema = [{
-  '@context': 'https://schema.org', '@type': 'SportsEvent', name: `${e.name} ${e.year}`,
-  startDate: e.start, endDate: e.end, eventStatus: 'https://schema.org/EventScheduled',
-  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-  location: { '@type': 'Place', name: e.startHotel, address: { '@type': 'PostalAddress', addressRegion: 'Eastern Cape', addressCountry: 'ZA' } },
-  organizer: { '@type': 'Organization', name: 'Red Cherry Events', url: 'https://www.redcherryevents.co.za/' },
-  image: 'https://www.seatosea.co.za/og/home.jpg',
-  description: 'A 3-day navigational team enduro through the tribal lands of the Transkei on the Wild Coast.',
-}];
+const schema = eventSchema(e, { page: '/', description: 'A 3-day navigational team enduro through the tribal lands of the Transkei on the Wild Coast.' });
 ---
 <Base schema={schema}>
   <section class="hero">

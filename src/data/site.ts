@@ -381,10 +381,12 @@ export const testimonials = [
 export const sponsors = {
   title: { name: 'JBFE', href: 'https://www.jbfe.co.za/' },
   supporters: [
-    { name: 'Supermoist', href: 'https://supermoist.co.za/', logo: '/logos/smoist.png' },
+    { name: 'Supermoist', href: 'https://supermoist.co.za/', logo: '/logos/smoist.png' as string | null },
     { name: 'Green Motion', href: null as string | null, logo: '/logos/gmotion.png' },
     { name: 'Eastern Cape Motors', href: 'https://easterncapemotors.co.za/', logo: '/logos/ecmp.png' },
     { name: 'Oxygen Tyres', href: null as string | null, logo: '/logos/otyres.png' },
+    // No logo file yet: the name shows as text. Add the file to /public/logos and set `logo` to swap it in.
+    { name: 'RAD KTM', href: 'https://www.radmoto.co.za/', logo: null },
   ],
 };
 
@@ -430,3 +432,28 @@ export const rand = (n: number | null) =>
   n == null ? 'Price TBC' : 'R' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
 export const when = (e: Edition) => (e.dates ? `${e.dates} ${e.year}` : 'Dates to be confirmed');
+
+/* ---------- Event details for search engines (Google event listings) ----------
+ * Built from the edition and the rider entry price above, so there is nothing to edit here.
+ * An edition with no `start` date yet returns nothing. */
+export const eventSchema = (e: Edition, opts: { description?: string; page?: string } = {}) => {
+  if (!e.start) return [];
+  const base = 'https://www.seatosea.co.za';
+  const rider = packages.find((p) => p.id === 'rider');
+  return [{
+    '@context': 'https://schema.org', '@type': 'SportsEvent', name: `${e.name} ${e.year}`,
+    startDate: e.start, endDate: e.end, eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    url: `${base}${opts.page ?? e.href}`,
+    location: { '@type': 'Place', name: e.startHotel, address: { '@type': 'PostalAddress', addressRegion: 'Eastern Cape', addressCountry: 'ZA' } },
+    organizer: { '@type': 'Organization', name: 'Red Cherry Events', url: contact.organiser },
+    image: [`${base}/og/${e.id}.jpg`, `${base}/og/home.jpg`],
+    description: opts.description ?? e.summary,
+    ...(e.entriesOpen && rider?.price ? {
+      offers: {
+        '@type': 'Offer', name: rider.name, url: e.enterUrl, price: rider.price, priceCurrency: 'ZAR',
+        availability: 'https://schema.org/InStock',
+      },
+    } : {}),
+  }];
+};
