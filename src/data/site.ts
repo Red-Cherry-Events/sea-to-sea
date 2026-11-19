@@ -385,8 +385,7 @@ export const sponsors = {
     { name: 'Green Motion', href: null as string | null, logo: '/logos/gmotion.png' },
     { name: 'Eastern Cape Motors', href: 'https://easterncapemotors.co.za/', logo: '/logos/ecmp.png' },
     { name: 'Oxygen Tyres', href: null as string | null, logo: '/logos/otyres.png' },
-    // No logo file yet: the name shows as text. Add the file to /public/logos and set `logo` to swap it in.
-    { name: 'RAD KTM', href: 'https://www.radmoto.co.za/', logo: null },
+    { name: 'RAD KTM', href: 'https://www.radmoto.co.za/', logo: '/logos/radktm.png' },
   ],
 };
 
