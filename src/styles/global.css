@@ -251,6 +251,8 @@ ul { margin: 0; padding: 0; }
 .site-foot__tiles { width: 180px; border-radius: var(--radius-sm); }
 .sponsors { display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-6); align-items: center; margin-top: var(--space-4); }
 .sponsors img { height: 28px; width: auto; filter: brightness(0) invert(1); opacity: .9; }
+.sponsors a { text-decoration: none; }
+.sponsors__name { font: 800 26px/28px var(--font-display); text-transform: uppercase; letter-spacing: .04em; color: #fff; opacity: .9; white-space: nowrap; }
 .site-foot__base { margin-top: var(--space-7); padding-top: var(--space-4); border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); justify-content: space-between; color: var(--ink); }
 .socials { display: flex; gap: var(--space-3); }
 .socials a { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--ink-muted); border-radius: var(--radius-md); }
